@@ -6,36 +6,21 @@
   <title>My AngularJS App</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="js/c3/c3.css">
   <link rel="stylesheet" href="app.css">
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="js/angular/angular.js"></script>
   <script src="js/angular-ui-router/release/angular-ui-router.js"></script>
   <script src="js/app.js"></script>
   <script src="js/jquery/dist/jquery.js"></script>
-  <script src="js/d3/d3.min.js"></script>
-  <script src="js/c3/c3.js"></script>
-  <script src="js/Charter.js"></script>
-    <script src="js/DataService.js"></script>
-  <script src="js/BackendDataService.js"></script>
-    <script src="js/CharterService.js"></script>
-    <script src="js/MainController.js"></script>
-    <script src="plugins/CheckBox/CheckboxController.js"></script>
-  <script src="plugins/clickable/ClickableController.js"></script>
 
+    <!--add script includes below-->
+    <script src="js/BackendDataService.js"></script>
+    <script src="js/MainController.js"></script>
+    <script src="plugins/examplePlugin/ExampleController.js"></script>
+    <!--add script includes above-->
 
 </head>
 <body data-ng-controller="MainController">
   <div ui-view="appView"></div>
-
-  <!--<button ng-click="graphData('#char')">Graph All Nodes</button>-->
-  <!--<button ng-click="graphData('#cha', ['Node1', 'Node2', 'Node5'])">Graph Some Nodes (Node 1, Node 2, and Node 5)</button>-->
-  <!--<button ng-click="graphData('#chart', null, ['function1', 'function3'])">Graph Functions 1 and 3 only</button>-->
-  <!--<button ng-click="graphData('#chart1', ['Node1', 'Node2', 'Node5'], ['function1', 'function3'])">Graph Functions 1 and 2 only for Nodes 1, 2, and 5</button>-->
-  <!--<div id="char"></div>-->
-  <!--<div id="cha"></div>-->
-  <!--<div id="chart"></div>-->
-  <!--<div id="chart1"></div>-->
-
 </body>
 </html>

@@ -1,4 +1,4 @@
-myApp.controller("ClickableController", function($scope, $state, BackendDataService){
+myApp.controller("ExampleController", function($scope, $state, BackendDataService){
 
     $scope.getAllUsers = function(){
         BackendDataService.getAllFreeTimes().then(function(data){

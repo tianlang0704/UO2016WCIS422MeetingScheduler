@@ -21,27 +21,11 @@ myApp.config(function($urlRouterProvider, $stateProvider) {
           }
         }
       })
-      .state("DataServiceTest",{
-        url: '/DataServiceTest',
+      .state("Example",{
+        url: '/Example',
         views: {
           'appView':{
-            templateUrl: "plugins/DataServiceTest/dataservicetest.html"
-          }
-        }
-      })
-      .state("Clickable",{
-        url: '/Clickable',
-        views: {
-          'appView':{
-            templateUrl: "plugins/clickable/clickable.html"
-          }
-        }
-      })
-      .state("CheckBox",{
-        url: '/CheckBox',
-        views: {
-          'appView':{
-            templateUrl: "plugins/CheckBox/checkbox.html"
+            templateUrl: "plugins/examplePlugin/example.html"
           }
         }
       });

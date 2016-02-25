@@ -17,18 +17,18 @@ myApp.service('BackendDataService', function($http, $q) {
     //this returns all free times for a user in the database
     this.getAllFreeTimesForUserByID = function (id){
         console.debug("requesting");
-        return $http.get('http://qnap.tracehagan.com:30000/getFreeTimeForUserByName/'+ id).then(function(data1){
+        return $http.get('http://qnap.tracehagan.com:30000/getFreeTimeForUserByName/'+ id).then(function(data){
             console.log("success");
             //console.log(data1);
             var returnMe = [];
             if(data.data.length>1) {
-                data1.data.forEach(function (data) {
+                data.data.forEach(function (data) {
                     var row = [data.name, data.label, new Date(data.start), new Date(data.end)];
                     returnMe.push(row);
                 });
             }else{
-                return [[data.name, data.label, new Date(1456355691780), new Date(1456357693900)],
-                    [data.name, data.label, new Date(1456355691780), new Date(1456357693900)]];
+                return [[data.data.name, data.data.label, new Date(1456355691780), new Date(1456357693900)],
+                    [data.data.name, data.data.label, new Date(1456355691780), new Date(1456357693900)]];
             }
             //return [[data.name, data.label, new Date(1456355691780), new Date(1456357693900)],
             //    ["Name", "blah", new Date(1456356698280), new Date(1456357699680)]];
