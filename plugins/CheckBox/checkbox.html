@@ -1,0 +1,18 @@
+
+<div ng-controller="CheckboxController" ng-init="init()">
+    <button ng-click="home()">Home</button>
+<!--<button ng-click="home()">Home</button><button ng-click="graphSelected()">GraphSelected</button>-->
+    <p>Nodes:</p>
+    <ul>
+    <li ng-repeat="node in getNames()">
+        <img ng-if="node.selected" src="plugins/CheckBox/check.png"><button ng-click="nodeClicked(node);graphSelected()"> {{node.name}}</button>
+    </li>
+</ul>
+    <p>Functions:</p>
+    <ul>
+        <li ng-repeat="node in getFunctionNames()">
+            <img ng-if="node.selected" src="plugins/CheckBox/check.png"><button ng-click="nodeClicked(node);graphSelected()"> {{node.name}}</button>
+        </li>
+    </ul>
+    <div id="chart"></div>
+</div>
