@@ -43,7 +43,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //  userid: username
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.GetAllFreeTimesForUserBetweenDates = function(userid, start, end){
+    this.getAllFreeTimesForUserBetweenDates = function(userid, start, end){
         return $http.get('http://qnap.tracehagan.com:30000/getFreeTimesBetween/start/end/userid').then(function(data){
 
         });
@@ -53,10 +53,9 @@ myApp.service('BackendDataService', function($http, $q) {
     //@return
     //  object of all free times between two given date/times ready for Google Charts
     //@params
-    //  userid: username
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.GetAllFreeTimesBetweenDates = function(start,end){
+    this.getAllFreeTimesBetweenDates = function(start,end){
         return $http.get('http://qnap.tracehagan.com:30000/getFreeTimesBetween/start/end').then(function(data){
 
         });
@@ -69,7 +68,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //  userid: username
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.AddFreeTimeForUser = function(userid, start, end){
+    this.addFreeTimeForUser = function(userid, start, end){
         return $http.get('http://qnap.tracehagan.com:30000/addFreeTime/start/end/userid').then(function(data){
 
         });
@@ -81,7 +80,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //@params
     //  userid: username
     //  pass: password (hash?)
-    this.CreateUser = function(username, pass){
+    this.createUser = function(username, pass){
         return $http.get('http://qnap.tracehagan.com:30000/createUser/username/pass').then(function(data){
 
         });
@@ -93,7 +92,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //@params
     //  userid: username
     //  pass: password (hash?)
-    this.CheckLogin = function(username, pass){
+    this.checkLogin = function(username, pass){
         return $http.get('http://qnap.tracehagan.com:30000/checkLogin/username/pass').then(function(data){
 
         });
@@ -104,7 +103,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //  object with data properly formatted for google charts
     //@params
     //  userid: username
-    this.GetAllMeetingsForUser = function(userid){
+    this.getAllMeetingsForUser = function(userid){
         return $http.get('http://qnap.tracehagan.com:30000/getMeetings/userid').then(function(data){
 
         });
@@ -116,7 +115,7 @@ myApp.service('BackendDataService', function($http, $q) {
     //@params
     //  user1: username1 (professor username)
     //  user2: username2 (team username)
-    this.SetNewMeeting = function(user1,user2){
+    this.setNewMeeting = function(user1,user2){
         return $http.get('http://qnap.tracehagan.com:30000/getMeetings/userid').then(function(data){
 
         });
