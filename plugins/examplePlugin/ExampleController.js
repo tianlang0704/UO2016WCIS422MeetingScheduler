@@ -4,10 +4,10 @@ myApp.controller("ExampleController", function($scope, $state, BackendDataServic
         BackendDataService.getAllFreeTimes().then(function(data){
             console.log(data);
         });
-    }
+    };
 
-    $scope.getAllFreeTimesForUserByID =function(id){
-        BackendDataService.getAllFreeTimesForUserByID(id).then(function(data){
+    $scope.getAllFreeTimesForUserByID = function(id){
+        BackendDataService.getAllTimesBetweenDates().then(function(data){
             console.log(data);
             function drawChart() {
 
@@ -30,6 +30,6 @@ myApp.controller("ExampleController", function($scope, $state, BackendDataServic
             }
             drawChart();
         });
-    }
+    };
 
 });
