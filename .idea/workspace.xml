@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4a772a98-80a8-47b2-9b9d-c48ef86b1ee0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/BackendDataService.js" afterPath="$PROJECT_DIR$/js/BackendDataService.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/BackendDataServiceMock.js" afterPath="$PROJECT_DIR$/js/BackendDataServiceMock.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/MainController.js" afterPath="$PROJECT_DIR$/js/MainController.js" />
     </list>
     <ignored path="Project2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -80,8 +78,8 @@
       <file leaf-file-name="BackendDataService.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/BackendDataService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.51005024">
-              <caret line="98" column="6" selection-start-line="98" selection-start-column="6" selection-end-line="98" selection-end-column="6" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="0" column="50" selection-start-line="0" selection-start-column="50" selection-end-line="0" selection-end-column="50" />
               <folding />
             </state>
           </provider>
@@ -347,6 +345,9 @@
     </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="4a772a98-80a8-47b2-9b9d-c48ef86b1ee0" name="Default" comment="" />
@@ -377,6 +378,14 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -462,8 +471,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/BackendDataService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51005024">
-          <caret line="98" column="6" selection-start-line="98" selection-start-column="6" selection-end-line="98" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="50" selection-start-line="0" selection-start-column="50" selection-end-line="0" selection-end-column="50" />
           <folding />
         </state>
       </provider>
