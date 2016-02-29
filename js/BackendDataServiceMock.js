@@ -1,4 +1,4 @@
-myApp.service('BackendDataService', function($http, $q) {
+myApp.service('BackendDataService', function($http) {
 
     //this returns every free time in the databse regardless of user or date.
     this.getAllTimes = function(){
