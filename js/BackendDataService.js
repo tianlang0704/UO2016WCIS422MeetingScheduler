@@ -8,45 +8,68 @@ myApp.service('BackendDataService', function($http) {
 //AND login_id = ‘$loginID’ AND free_label = ‘Free Time’;
 
 //*****************************************************************************//
-//    Check Login (Only returns result if a match is found)
-//    SELECT login_role FROM Login
-//    WHERE login_username = ‘$username’ AND login_password = ‘$password’;
+
+    // Functions, returns -1 if no user, value for role if user exists
     this.CheckLogin = function(user, pass){
-        return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + pass).then(function(data){
-            return data;
+        sha512(pass).then(function(password){
+            return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + password).then(function(data){
+                console.log(data);
+                if(data.data.length===1){
+                    if(data.data[0].login_role){
+                        return data.data[0].login_role;
+                    }
+                }else{
+                    return -1;
+                }
+            });
         });
     };
-//    Get All Times Between Dates For All Users
-//    SELECT login_id, free_start, free_end FROM FreeTime
-//    WHERE free_start >= ‘$startTime’ AND free_end <= ‘$endTime’
-//ORDER BY login_id;
+    // functions
     this.GetAllTimesBetweenDates = function(Start, End){
         return this.GetAllTimesBetweenDatesForUser(Start, End, null);
-    /*
-        return $http.get('http://qnap.tracehagan.com:30000/getAllTimesBetweenDates/'+ Start + "/" + End).then(function(data){
-            //process and format data for Google Charts, if needed (Server implementation could affect
-        });
-    */
     };
 
-//    Get All Times Between Dates For Single User
-//    SELECT free_start, free_end FROM FreeTime
-//    WHERE free_start >= ‘$startTime’ AND free_end <= ‘$endTime’
-//AND login_id = ‘$loginID’;
+    // Functions, formats data correctly for users
     this.GetAllTimesBetweenDatesForUser = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllTimesBetweenDates/' + Start + '/' + End + '/' + User).then(function(data){
+        //date.getDate date.getMonth date.getFullYear
+        S = Start.getTime()/1000;
+        E = End.getTime()/1000;
+        return $http.get('http://qnap.tracehagan.com:30000/getAllTimesBetweenDates/' + S + '/' + E + '/' + User).then(function(rawdata){
             //process and format data for Google Charts, if needed (Server implementation could affect
+            var day = Start.getDate();
+            var month = Start.getMonth();
+            var year = Start.getFullYear();
+            //new Date(year,month,day,7,0,0,0)
+            //new Date(year,month,day,7,0,0,1)
+            //new Date(year,month,day,19,0,0,0)
+            //new Date(year,month,day,19,0,0,1)
+            var data = rawdata.data;
+            var returnMe = [];
+            console.log(data);
+            data.forEach(function(d){
+                returnMe.push([d.login_displayname, d.free_label, new Date(d.free_start*1000), new Date(d.free_end*1000)]);
+                console.log(d);
+            });
+            returnMe.push([data[0].login_displayname, '', new Date(year,month,day,6,0,0,0), new Date(year,month,day,6,0,0,1)]);
+            returnMe.push([data[0].login_displayname, '', new Date(year,month,day,19,0,0,0), new Date(year,month,day,19,0,0,1)]);
+            return returnMe;
+            //attach a millisecond at 7am and a millisecond at 7pm for the single user or for all users
 
         });
     };
 
-//    Create Meeting/Free Time ($isMeeting should be ‘Meeting’ or ‘Free Time’
-//INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`)
-//    VALUES (‘$startTime’, ‘$endTime’, ‘$isMeeting’, ‘$userID’);
-
+// Functions
     this.AddMeetingForUser = function(Start, End, User){
+        console.log(End);
+        console.log(Start);
+        console.log(End.getMilliseconds());
+        console.log(Start.getMilliseconds());
+        Start = Start.getTime()/1000;
+        End = End.getTime()/1000;
+        console.log(End);
+        console.log(Start);
         return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting').then(function(data){
-
+            //indicate success or failure
         });
     };
 
@@ -54,17 +77,22 @@ myApp.service('BackendDataService', function($http) {
 //        DELETE FROM FreeTime
 //    WHERE free_start = ‘$startTime’ AND free_end = ‘$endTime’ AND login_id = ‘$loginID’;
     this.RemoveMeetingForUser = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User + '/1').then(function(data){
-
+        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
+            //indicate sucess or failure
         });
     };
 
-//    Create Meeting/Free Time ($isMeeting should be ‘Meeting’ or ‘Free Time’
-//INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`)
-//    VALUES (‘$startTime’, ‘$endTime’, ‘$isMeeting’, ‘$userID’);
     this.AddFreeTimeForUser = function(Start, End, User){
+        console.log(End);
+        console.log(Start);
+        console.log(End.getMilliseconds());
+        console.log(Start.getMilliseconds());
+        Start = Start.getTime()/1000;
+        End = End.getTime()/1000;
+        console.log(End);
+        console.log(Start);
         return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free').then(function(data){
-
+            //indicate success or failure
         });
     };
 
@@ -72,15 +100,19 @@ myApp.service('BackendDataService', function($http) {
 //        DELETE FROM FreeTime
 //    WHERE free_start = ‘$startTime’ AND free_end = ‘$endTime’ AND login_id = ‘$loginID’;
     this.RemoveFreeTimeForUser = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User + '/0').then(function(data){
-
+        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
+            //indicate success or failure
         });
     };
 
     //Todo: get allUsers query
     this.GetAllUsers = function(){
         return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
-
+            //return array of user objects
+            if(data.data.length > 0) {
+                return data.data;
+            }
+            return -1;
         });
     };
 
@@ -88,8 +120,10 @@ myApp.service('BackendDataService', function($http) {
 //    INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`)
 //    VALUES (‘$userName’, ‘$displayName’, ‘$roleNum’, ‘$password’);
     this.AddUser = function(Username, DisplayName, Password, PermissionsLevel){
-        return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + Password + '/' + PermisionsLevel).then(function(data){
-
+        sha512(Password).then(function(pass){
+            return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermisionsLevel).then(function(data){
+                //indicate success or failure
+            });
         });
     };
 
@@ -98,61 +132,53 @@ myApp.service('BackendDataService', function($http) {
 //    WHERE login_username = ‘$username’;
     this.RemoveUser = function(Username){
         return $http.get('http://qnap.tracehagan.com:30000/removeUser/' + Username).then(function(data){
-
+            //indicate success or failure
         });
     };
 
     //Todo: Queries, implement
     this.ResetDatabase = function(){
         return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
-
+            //indicate success or failure
         });
     };
     this.GetMeetingsToPopulateBox = function(Start, End, User){
         return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
-
+            //array of time objects?
         });
     };
     this.GetFreeTimesToPopulateBox = function(Start, End, User){
         return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
-
+            //array of time objects?
         });
     };
-    //
-    ////this returns every free time in the databse regardless of user or date.
-    //this.getAllFreeTimes = function(){
-    //    var freeTimes = [];
-    //    //var deferred = $q.defer();
-    //
-    //    return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
-    //        console.log("success");
-    //        console.log(data);
-    //        return data;
-    //        //deferred.resolve(data);
-    //        //this.freeTimes=data;
-    //    });
-    //};
-    //
-    ////this returns all free times for a user in the database
-    //this.getAllFreeTimesForUserByID = function (id){
-    //    console.debug("requesting");
-    //    return $http.get('http://qnap.tracehagan.com:30000/getFreeTimeForUserByName/'+ id).then(function(data){
-    //        console.log("success");
-    //        //console.log(data1);
-    //        var returnMe = [];
-    //        if(data.data.length>1) {
-    //            data.data.forEach(function (data) {
-    //                var row = [data.name, data.label, new Date(data.start), new Date(data.end)];
-    //                returnMe.push(row);
-    //            });
-    //        }else{
-    //            return [[data.data.name, data.data.label, new Date(1456355691780), new Date(1456357693900)],
-    //                [data.data.name, data.data.label, new Date(1456355691780), new Date(1456357693900)]];
-    //        }
-    //        //return [[data.name, data.label, new Date(1456355691780), new Date(1456357693900)],
-    //        //    ["Name", "blah", new Date(1456356698280), new Date(1456357699680)]];
-    //        return returnMe;
-    //    });
-    //};
 
+    // **********************************************************************************************
+    //below is mozilla code from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest with modifications
+    var sha512 = function(str) {
+        // We transform the string into an arraybuffer.
+        var buffer = new TextEncoder("utf-8").encode(str);
+        return crypto.subtle.digest("SHA-512", buffer).then(function (hash) {
+            return hex(hash);
+        });
+    };
+
+    var hex = function(buffer) {
+        var hexCodes = [];
+        var view = new DataView(buffer);
+        for (var i = 0; i < view.byteLength; i += 4) {
+            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
+            var value = view.getUint32(i);
+            // toString(16) will give the hex representation of the number without padding
+            var stringValue = value.toString(16);
+            // We use concatenation and slice for padding
+            var padding = '00000000';
+            var paddedValue = (padding + stringValue).slice(-padding.length);
+            hexCodes.push(paddedValue);
+        }
+
+        // Join all the hex strings into one
+        return hexCodes.join("");
+    };
+    // **********************************************************************************************
 });
