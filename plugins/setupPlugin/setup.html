@@ -1,0 +1,121 @@
+<style>
+    #tool_bar{
+        text-align: right;
+        padding-right: 17px;
+    }
+    #setup_container{
+        width: 600px; margin: auto;
+    }
+    #user_table_container {
+        height: 400px;
+        width: 600px;
+        margin-top: 10px;
+        overflow-y: scroll
+    }
+    #user_table{
+        width: 100%;
+    }
+    table, tr{
+        border: 1px solid gray;
+        border-collapse: collapse;
+        font-family: Calibri, "Times New Roman";
+    }
+    tr:nth-child(even){
+        background-color: lightgray;
+    }
+    th, td{
+        text-align: left;
+        padding:9px 5px;
+    }
+    .selected {
+        background-color: brown;
+        color: #FFF;
+    }
+    #user_edits_container{
+        height: 250px;
+        width: 600px;
+        margin-top: 10px;
+        padding: 10px 10px;
+    }
+    #user_delete_select{
+        width: 300px;
+    }
+    .user_delete_container{
+        width: 100%;
+        display: inline-block;
+        text-align: center;
+    }
+    .user_add_field{
+        margin-top: 5px;
+    }
+    .user_add_label{
+        width: 150px;
+        display: inline-block;
+        font-family: Arial, Calibri;
+    }
+    .user_add_input {
+        width: 400px;
+    }
+    #user_add_button{
+        margin-top: 10px;
+        margin-right: 42px;
+        width: 50px;
+        float: right;
+    }
+</style>
+
+<div id="setup_container" ng-controller="SetupController" ng-init="init()">
+    <div id="tool_bar"><a>Filter:  </a><input ng-model="input"></div>
+
+    <div id="user_table_container">
+        <table id="user_table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Disyplay Name</th>
+                    <th>Role</th>
+                </tr>
+                <tr ng-repeat="user in users | filter:input">
+                    <td>{{user[0]}}</td>
+                    <td>{{user[1]}}</td>
+                    <td>{{user[2]}}</td>
+                    <td>{{user[3]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="user_edits_container">
+        <div class="user_delete_container">
+            <select id="user_delete_select">
+                <option ng-repeat="user in users | filter:input" value="{{user[0]}}">{{user[2]}}</option>
+            </select>
+            <button id="user_delete_button">Delete</button>
+        </div>
+        <hr />
+        <div class="user_add_container">
+            <div class="user_add_field">
+                <div class="user_add_label">Username: </div>
+                <input class="user_add_input" id="username"/>
+            </div>
+            <div class="user_add_field">
+                <div class="user_add_label">Password: </div>
+                <input class="user_add_input" id="password"/>
+            </div>
+            <div class="user_add_field">
+                <div class="user_add_label">Retype Password: </div>
+                <input class="user_add_input" id="re_password"/>
+            </div>
+            <div class="user_add_field">
+                <div class="user_add_label">Display Name: </div>
+                <input class="user_add_input" id="display_name"/>
+            </div>
+            <div class="user_add_field">
+                <div class="user_add_label">Role: </div>
+                <input class="user_add_input" id="role"/>
+            </div>
+        </div>
+        <button id="user_add_button">Add</button>
+    </div>
+</div>
