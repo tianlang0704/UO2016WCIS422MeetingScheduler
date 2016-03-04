@@ -1,5 +1,23 @@
 myApp.service('BackendDataService', function($http) {
 
+    this.getAllUsers = function(){
+        var p1 = new Promise(
+            // The resolver function is called with the ability to resolve or
+            // reject the promise
+            function(resolve, reject) {
+                window.setTimeout(
+                    function() {
+                        // We fulfill the promise !
+                        var arr = [[0, "username1", "professor 1", 0]];
+                        for(i = 1; i < 20; i++)
+                            arr.push([i, "username" + i, "display name " + i, 1]);
+
+                        resolve(arr);
+                    }, Math.random() * 2000 + 1000);
+            });
+        return p1;
+    };
+
     //this returns every free time in the databse regardless of user or date.
     this.getAllTimes = function(){
         var p1 = new Promise(
