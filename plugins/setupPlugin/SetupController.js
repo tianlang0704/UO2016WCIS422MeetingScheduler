@@ -9,18 +9,21 @@ myApp.controller("SetupController", function($scope, $state, BackendDataService)
         $scope.UpdateUserTable();
     }
 
-    $scope.ShowMessage = function(msg, color, fadeOut)
+    $scope.ShowMessage = function(msg, color, fadeOutDuration, isTop)
     {
         var msgLabel = $("<label> </label>");
         msgLabel.addClass("msg_label").text(msg);
         msgLabel.opacity = 0;
-        $("#message_container").append(msgLabel);
-        msgLabel.fadeIn(500).fadeOut(fadeOut);
-
+        if(isTop == true)
+            $("#message_container_top").append(msgLabel);
+        else
+            $("#message_container_bot").append(msgLabel);
+        msgLabel.fadeIn(500).fadeOut(fadeOutDuration);
     }
 
     $scope.UpdateUserTable = function()
     {
+        $scope.ShowMessage("Loading users", "red", 5000, true);
         BackendDataService.GetAllUsers()
             .then(function(data)
             {
