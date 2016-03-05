@@ -1,6 +1,5 @@
 myApp.service('BackendDataService', function($http) {
-
-    this.getAllUsers = function(){
+    this.RemoveUser = function(Username){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -8,10 +7,35 @@ myApp.service('BackendDataService', function($http) {
                 window.setTimeout(
                     function() {
                         // We fulfill the promise !
-                        var arr = [[0, "username1", "professor 1", 0]];
-                        for(i = 1; i < 20; i++)
-                            arr.push([i, "username" + i, "display name " + i, 1]);
+                        resolve({success: true});
+                    }, Math.random() * 2000 + 1000);
+            });
+        return p1;
+    };
 
+    this.GetAllUsers = function(){
+        var p1 = new Promise(
+            // The resolver function is called with the ability to resolve or
+            // reject the promise
+            function(resolve, reject) {
+                window.setTimeout(
+                    function() {
+                        // We fulfill the promise !
+                        var user = {};
+                        user.id = 0;
+                        user.username = "username0";
+                        user.displayname = "display name 0";
+                        user.role = 0;
+                        var arr = [user];
+                        for(i = 1; i < 20; i++)
+                        {
+                            var user = {};
+                            user.id = i;
+                            user.username = "username" + i;
+                            user.displayname = "display name " + i;
+                            user.role = 1;
+                            arr.push(user);
+                        }
                         resolve(arr);
                     }, Math.random() * 2000 + 1000);
             });
@@ -19,7 +43,7 @@ myApp.service('BackendDataService', function($http) {
     };
 
     //this returns every free time in the databse regardless of user or date.
-    this.getAllTimes = function(){
+    this.GetAllTimes = function(){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -41,7 +65,7 @@ myApp.service('BackendDataService', function($http) {
     };
 
     //this returns all free times for a user in the database
-    this.getAllTimesForUserByID = function (id){
+    this.GetAllTimesForUserByID = function (id){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -66,7 +90,7 @@ myApp.service('BackendDataService', function($http) {
     //  userid: username
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.getAllTimesForUserBetweenDates = function(userid, start, end){
+    this.GetAllTimesForUserBetweenDates = function(userid, start, end){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -90,7 +114,7 @@ myApp.service('BackendDataService', function($http) {
     //@params
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.getAllTimesBetweenDates = function(start,end){
+    this.GetAllTimesBetweenDates = function(start,end){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -117,7 +141,7 @@ myApp.service('BackendDataService', function($http) {
     //  userid: username
     //  start: int of miliseconds for date/time of start
     //  end: int of milliseconds for date/time of end
-    this.addFreeTimeForUser = function(userid, start, end){
+    this.AddFreeTimeForUser = function(userid, start, end){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -137,7 +161,7 @@ myApp.service('BackendDataService', function($http) {
     //@params
     //  userid: username
     //  pass: password (hash?)
-    this.createUser = function(username, pass){
+    this.AddUser = function(Username, DisplayName, Password, PermissionsLevel){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -145,7 +169,7 @@ myApp.service('BackendDataService', function($http) {
                 window.setTimeout(
                     function() {
                         // We fulfill the promise !
-                        resolve(2);
+                        resolve(1);
                     }, Math.random() * 2000 + 1000);
             });
         return p1;
@@ -157,7 +181,7 @@ myApp.service('BackendDataService', function($http) {
     //@params
     //  userid: username
     //  pass: password (hash?)
-    this.checkLogin = function(username, pass){
+    this.CheckLogin = function(username, pass){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -188,7 +212,7 @@ myApp.service('BackendDataService', function($http) {
     //@params
     //  user1: username1 (professor username)
     //  user2: username2 (team username)
-    this.setNewMeeting = function(user1,user2){
+    this.SetNewMeeting = function(user1,user2){
         var p1 = new Promise(
             // The resolver function is called with the ability to resolve or
             // reject the promise
@@ -201,5 +225,33 @@ myApp.service('BackendDataService', function($http) {
             });
         return p1;
     };
+// **********************************************************************************************
+    //below is mozilla code from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest with modifications
+    var sha512 = function(str) {
+        // We transform the string into an arraybuffer.
+        var buffer = new TextEncoder("utf-8").encode(str);
+        return crypto.subtle.digest("SHA-512", buffer).then(function (hash) {
+            return hex(hash);
+        });
+    };
+    this.sha512 = sha512;
 
+    var hex = function(buffer) {
+        var hexCodes = [];
+        var view = new DataView(buffer);
+        for (var i = 0; i < view.byteLength; i += 4) {
+            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
+            var value = view.getUint32(i);
+            // toString(16) will give the hex representation of the number without padding
+            var stringValue = value.toString(16);
+            // We use concatenation and slice for padding
+            var padding = '00000000';
+            var paddedValue = (padding + stringValue).slice(-padding.length);
+            hexCodes.push(paddedValue);
+        }
+
+        // Join all the hex strings into one
+        return hexCodes.join("");
+    };
+    // **********************************************************************************************
 });

@@ -162,6 +162,7 @@ myApp.service('BackendDataService', function($http) {
             return hex(hash);
         });
     };
+    this.sha512 = sha512;
 
     var hex = function(buffer) {
         var hexCodes = [];

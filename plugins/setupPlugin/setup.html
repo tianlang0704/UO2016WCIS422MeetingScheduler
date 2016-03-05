@@ -1,10 +1,13 @@
 <style>
+    #setup_container{
+        padding: 10px 20px;
+        width: 600px; margin: auto;
+        border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+    }
     #tool_bar{
         text-align: right;
         padding-right: 17px;
-    }
-    #setup_container{
-        width: 600px; margin: auto;
     }
     #user_table_container {
         height: 400px;
@@ -32,13 +35,14 @@
         color: #FFF;
     }
     #user_edits_container{
-        height: 250px;
+        height: 240px;
         width: 600px;
         margin-top: 10px;
         padding: 10px 10px;
     }
     #user_delete_select{
-        width: 300px;
+        width: 250px;
+        margin-right:20px;
     }
     .user_delete_container{
         width: 100%;
@@ -50,22 +54,93 @@
     }
     .user_add_label{
         width: 150px;
+        padding-right: 20px;
+        color: #2b669a;
+        font-weight: 600;
+        text-align: right;
         display: inline-block;
         font-family: Arial, Calibri;
     }
     .user_add_input {
-        width: 400px;
+        width: 300px;
+        height: 23px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
     }
     #user_add_button{
         margin-top: 10px;
-        margin-right: 42px;
-        width: 50px;
-        float: right;
+        margin-left: 280px;
+    }
+    select{
+        width: 300px;
+        height: 27px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 8px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
+    }
+
+    button {
+        background-color:#44c767;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        border-radius:5px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:2px 12px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;
+    }
+    button:hover {
+        background-color:#5cbf2a;
+    }
+    button:active {
+        position:relative;
+        top:1px;
+    }
+    button.red_button{
+        border:1px solid #843534;
+        background-color:#b92c28;
+    }
+    button.red_button:hover {
+        background-color:#c7254e;
+    }
+    #message_container{
+        position: fixed;
+        left: 0px;
+        bottom:50px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    .msg_label{
+        margin: auto;
+        text-align: center;
+        width: 450px;
+        height: 30px;
+        padding-top: 10px;
+        border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        font-family:Arial;
+        color: red;
+        background: #FFFFFF;
+        display: block;
+        pointer-events: none;
     }
 </style>
 
-<div id="setup_container" ng-controller="SetupController" ng-init="init()">
-    <div id="tool_bar"><a>Filter:  </a><input ng-model="input"></div>
+<div id="setup_container" ng-controller="SetupController" ng-init="Init()">
+    <div id="tool_bar"><input placeholder="Filter" ng-model="ui_i_filter"></div>
 
     <div id="user_table_container">
         <table id="user_table">
@@ -76,11 +151,11 @@
                     <th>Disyplay Name</th>
                     <th>Role</th>
                 </tr>
-                <tr ng-repeat="user in users | filter:input">
-                    <td>{{user[0]}}</td>
-                    <td>{{user[1]}}</td>
-                    <td>{{user[2]}}</td>
-                    <td>{{user[3]}}</td>
+                <tr ng-repeat="user in users | filter:ui_i_filter">
+                    <td>{{user.id}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.displayname}}</td>
+                    <td>{{user.role == 0 ? "Professor" : "Student"}}</td>
                 </tr>
             </tbody>
         </table>
@@ -88,34 +163,41 @@
 
     <div id="user_edits_container">
         <div class="user_delete_container">
-            <select id="user_delete_select">
-                <option ng-repeat="user in users | filter:input" value="{{user[0]}}">{{user[2]}}</option>
-            </select>
-            <button id="user_delete_button">Delete</button>
+            <select id="user_delete_select"
+                    ng-options="user.displayname for user in users | filter:ui_i_filter track by user.id"
+                    ng-model="ui_i_del_sel"></select>
+            <button class="red_button" id="user_delete_button" ng-click="CommitUserDeletion()">Delete</button>
         </div>
         <hr />
         <div class="user_add_container">
-            <div class="user_add_field">
-                <div class="user_add_label">Username: </div>
-                <input class="user_add_input" id="username"/>
-            </div>
-            <div class="user_add_field">
-                <div class="user_add_label">Password: </div>
-                <input class="user_add_input" id="password"/>
-            </div>
-            <div class="user_add_field">
-                <div class="user_add_label">Retype Password: </div>
-                <input class="user_add_input" id="re_password"/>
-            </div>
-            <div class="user_add_field">
-                <div class="user_add_label">Display Name: </div>
-                <input class="user_add_input" id="display_name"/>
-            </div>
-            <div class="user_add_field">
-                <div class="user_add_label">Role: </div>
-                <input class="user_add_input" id="role"/>
-            </div>
+            <form name="user_add_form">
+                <div class="user_add_field">
+                    <div class="user_add_label">Username </div>
+                    <input class="user_add_input" name="username" placeholder="Username" ng-model="ui_i_username" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Password </div>
+                    <input class="user_add_input" name="password" placeholder="Password" type="password"  ng-model="ui_i_password" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Retype Password </div>
+                    <input class="user_add_input" name="re_password" placeholder="Password" type="password" ng-model="ui_i_repassword" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Display Name </div>
+                    <input class="user_add_input" name="display_name" placeholder="Display Name" ng-model="ui_i_dname" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Role</div>
+                    <select name="role" ng-model="ui_i_role" required>
+                        <option value="0">Professor</option>
+                        <option value="1">Student</option>
+                    </select>
+                </div>
+            </form>
         </div>
-        <button id="user_add_button">Add</button>
+        <button id="user_add_button" ng-click="CommitUserInfo()">Add</button>
+    </div>
+    <div id="message_container">
     </div>
 </div>
