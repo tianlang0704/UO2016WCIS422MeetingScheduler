@@ -152,7 +152,7 @@
     }
     #message_container_bot{
         position: fixed;
-        left: 0px;
+        left: 0;
         bottom:50px;
         width:100%;
         opacity: 1;
@@ -160,7 +160,7 @@
     }
     #message_container_top{
         position: fixed;
-        left: 0px;
+        left: 0;
         top: 20px;
         width:100%;
         opacity: 1;
@@ -175,8 +175,8 @@
         border-radius: 5px;
         -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
-        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
-        font-family:Arial;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        font-family: Arial;
         color: red;
         background: #FFFFFF;
         font-weight: bold;
@@ -213,7 +213,8 @@
         <div class="user_delete_container">
             <select id="user_delete_select"
                     ng-options="user.displayname for user in users | filter:ui_i_filter track by user.id"
-                    ng-model="ui_i_del_sel"></select>
+                    ng-model="ui_i_del_sel">
+            </select>
             <button class="red_button" id="user_delete_button" ng-click="CommitUserDeletion()">Delete</button>
         </div>
         <hr />

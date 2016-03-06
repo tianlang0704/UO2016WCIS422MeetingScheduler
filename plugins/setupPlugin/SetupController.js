@@ -61,11 +61,12 @@ myApp.controller("SetupController", function($scope, $state, BackendDataService)
     $scope.CommitUserInfo = function()
     {
         //check input fields
-        if($scope.user_add_form.username.$error.required == true ||
-           $scope.user_add_form.display_name.$error.required == true ||
-            $scope.user_add_form.password.$error.required == true ||
-            $scope.user_add_form.re_password.$error.required == true ||
-            $scope.user_add_form.role.$error.required == true) {
+        if($scope.user_add_form.username.$error.required ||
+           $scope.user_add_form.display_name.$error.required ||
+            $scope.user_add_form.password.$error.required ||
+            $scope.user_add_form.re_password.$error.required ||
+            $scope.user_add_form.role.$error.required)
+        {
             $scope.ShowMessage("Please complete the information form!");
             return false;
         }
