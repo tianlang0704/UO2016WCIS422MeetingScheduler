@@ -9,4 +9,7 @@ myApp.controller("MainController", function($scope, $state){
     $scope.setupPlugin = function (){
         $state.go('Setup');
     };
+    $scope.loginPlugin = function (){
+        $state.go('Login');
+    };
 });

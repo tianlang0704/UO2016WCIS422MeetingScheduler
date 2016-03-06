@@ -189,7 +189,13 @@ myApp.service('BackendDataService', function($http) {
                 window.setTimeout(
                     function() {
                         // We fulfill the promise !
-                        resolve(1);
+                        var user = {};
+                        user.username = username;
+                        user.displayname = "display name of "+ username;
+                        user.id = 1;
+                        user.role = 1;
+
+                        resolve(user);
                     }, Math.random() * 2000 + 1000);
             });
         return p1;

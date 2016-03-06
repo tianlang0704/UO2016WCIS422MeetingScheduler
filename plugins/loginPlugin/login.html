@@ -1,0 +1,69 @@
+<style>
+    #login_container{
+        padding: 10px 20px;
+        width: 300px; margin: auto;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+    }
+    input{
+        margin-top:10px;
+    }
+    #login_button_container{
+        margin-top:10px;
+    }
+
+    #message_container_bot{
+        position: fixed;
+        left: 0px;
+        bottom:50px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    #message_container_top{
+        position: fixed;
+        left: 0px;
+        top: 20px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    .msg_label{
+        margin: auto;
+        text-align: center;
+        width: 450px;
+        height: 30px;
+        padding-top: 10px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        font-family:Arial;
+        color: red;
+        background: #FFFFFF;
+        font-weight: bold;
+        display: block;
+        pointer-events: none;
+    }
+</style>
+
+<div id="login_container" ng-controller="LoginController" ng-init="Init()">
+    <div>
+        <form name="login_form">
+            <div>
+                <input name="login_username" ng-model="ui_i_username" required/>
+                <input name="login_password" ng-model="ui_i_password" type="password" required/>
+            </div>
+            <div id="login_button_container">
+                <button id="login_submit" ng-click="Login()">Submit</button>
+                <button id="login_reset">Reset</button>
+            </div>
+        </form>
+    </div>
+    <div id="message_container_bot">
+    </div>
+    <div id="message_container_top">
+    </div>
+</div>

@@ -36,6 +36,14 @@ myApp.config(function($urlRouterProvider, $stateProvider) {
               templateUrl: "plugins/setupPlugin/setup.html"
           }
         }
+      })
+      .state("Login",{
+        url: '/Login',
+        views: {
+          'appView':{
+              templateUrl: "plugins/loginPlugin/login.html"
+          }
+        }
       });
 });
 //angular.bootstrap(document.documentElement, ['myApp']);
