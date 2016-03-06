@@ -13,20 +13,42 @@
         height: 400px;
         width: 600px;
         margin-top: 10px;
-        overflow-y: scroll
     }
     #user_table{
         width: 100%;
     }
-    table, tr{
+    tr{
         border: 1px solid gray;
         border-collapse: collapse;
         font-family: Calibri, "Times New Roman";
     }
-    tr:nth-child(even){
+    thead{
+        display: block;
+        position: relative;
+    }
+    tbody{
+        height: 350px;
+        display: block;
+        overflow-y: scroll;
+    }
+    td:nth-child(1), th:nth-child(1) { min-width: 40px; }
+    td:nth-child(2), th:nth-child(2) { min-width: 150px; }
+    td:nth-child(3), th:nth-child(3) { min-width: 250px; }
+    td:nth-child(4), th:nth-child(4) { width: 100px; }
+    tbody tr:nth-child(even){
         background-color: lightgray;
     }
-    th, td{
+    tbody tr:nth-child(odd){
+        background-color: #F0F0F0;
+    }
+    tbody td{
+        border-radius: 4px;
+    }
+    tbody tr:hover{
+        background:#BDC3C7;
+        color:#FFFFFF;
+    }
+    tbody th, td{
         text-align: left;
         padding:9px 5px;
     }
@@ -153,13 +175,15 @@
 
     <div id="user_table_container">
         <table id="user_table">
-            <tbody>
+            <thead>
                 <tr>
                     <th>ID</th>
                     <th>User Name</th>
                     <th>Disyplay Name</th>
                     <th>Role</th>
                 </tr>
+            </thead>
+            <tbody >
                 <tr ng-repeat="user in users | filter:ui_i_filter">
                     <td>{{user.id}}</td>
                     <td>{{user.username}}</td>
