@@ -2,8 +2,14 @@
 <div ng-controller="ExampleController" ng-init="init()">
 
     <button ng-click="checkLogin()">CheckLogin</button>
-    <button ng-click="insertTime()">Insert Time</button>
-    <button ng-click="getAllFreeTimesForUserByID()">Graph User Free Time</button>
+    <button ng-click="insertTime()">AddMeetingForUser</button>
+    <button ng-click="getAllFreeTimes()">GetAllFreeTimes</button>
+    <button ng-click="getAllFreeTimesForUser()">GetAllFreeTimesForUser</button>
+    <button ng-click="removeTimeForUser()">RemoveFreeTimeForUser</button>
+    <button ng-click="addUser()">AddUser</button>
+    <button ng-click="removeUser()">RemoveUser</button>
+    <button ng-click="GetUserIDByUserName()">GetUserIDByUserName</button>
+    <button ng-click="GetAllUsers()">GetAllUsers</button>
 
     <div id="timeline" style="height: 180px;"></div>
 

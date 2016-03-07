@@ -11,7 +11,7 @@ myApp.service('BackendDataService', function($http) {
 
     // Functions, returns -1 if no user, value for role if user exists
     this.CheckLogin = function(user, pass){
-        sha512(pass).then(function(password){
+        return sha512(pass).then(function(password){
             return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + password).then(function(data){
                 console.log(data);
                 if(data.data.length===1){
@@ -82,6 +82,7 @@ myApp.service('BackendDataService', function($http) {
         });
     };
 
+    // Functions
     this.AddFreeTimeForUser = function(Start, End, User){
         console.log(End);
         console.log(Start);
@@ -105,9 +106,9 @@ myApp.service('BackendDataService', function($http) {
         });
     };
 
-    //Todo: get allUsers query
+    //Implemented, needs testing
     this.GetAllUsers = function(){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
+        return $http.get('http://qnap.tracehagan.com:30000/getAllUsers').then(function(data){
             //return array of user objects
             if(data.data.length > 0) {
                 return data.data;
@@ -116,40 +117,46 @@ myApp.service('BackendDataService', function($http) {
         });
     };
 
-//    Create User
-//    INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`)
-//    VALUES (‘$userName’, ‘$displayName’, ‘$roleNum’, ‘$password’);
+//    Functions, returns object
     this.AddUser = function(Username, DisplayName, Password, PermissionsLevel){
-        sha512(Password).then(function(pass){
-            return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermisionsLevel).then(function(data){
+        return sha512(Password).then(function(pass){
+            return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermissionsLevel).then(function(data){
                 //indicate success or failure
+                return data;
             });
         });
     };
 
-//    Delete User
-//    DELETE FROM Login
-//    WHERE login_username = ‘$username’;
+//    Implemented, need to test
     this.RemoveUser = function(Username){
         return $http.get('http://qnap.tracehagan.com:30000/removeUser/' + Username).then(function(data){
             //indicate success or failure
+            return data;
         });
     };
 
     //Todo: Queries, implement
     this.ResetDatabase = function(){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
+        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
             //indicate success or failure
+            return data;
         });
     };
     this.GetMeetingsToPopulateBox = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
+        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
             //array of time objects?
         });
     };
     this.GetFreeTimesToPopulateBox = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime', {id: 54}).then(function(data){
+        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
             //array of time objects?
+        });
+    };
+
+    this.GetUserIDByUserName = function(username){
+        return $http.get('http://qnap.tracehagan.com:30000/getIDforUser/' + username).then(function(data){
+            //array of time objects?
+            return data.data[0].login_id;
         });
     };
 
