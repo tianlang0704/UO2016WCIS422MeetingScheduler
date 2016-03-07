@@ -12,4 +12,7 @@ myApp.controller("MainController", function($scope, $state){
     $scope.loginPlugin = function (){
         $state.go('Login');
     };
+    $scope.timelinePlugin = function (){
+        $state.go('Timeline');
+    };
 });

@@ -1,0 +1,201 @@
+<style>
+    #timeline_chart_container{
+        text-align: center;
+        z-index:500;
+        position: relative;
+        padding: 10px 20px;
+        width: 90%;
+        min-height: 130px;
+        margin: auto;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: -1px -1px 5px 0 rgba(0, 0, 0, 0.15),
+                    1px 0 5px 0 rgba(0, 0, 0, 0.15),
+                    2px 0 20px 0 rgba(0, 0, 0, 0.1),
+                    -2px -2px 20px 0 rgba(0, 0, 0, 0.1);
+        -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+        -moz-user-select: none; /* mozilla browsers */
+        -khtml-user-select: none; /* webkit (konqueror) browsers */
+        -ms-user-select: none;
+        background-color: white;
+    }
+
+    #timeline_date{
+        height: 30px;
+    }
+    #timeline_date span{
+        cursor: pointer;
+        font-weight:bold;
+        font-family: Arial, Calibri;
+        font-size: 16px;
+        margin: 5px;
+        user-select: none;
+
+    }
+    #edits_container{
+        position: relative;
+        top: -10px;
+        padding: 10px 20px;
+        width: 550px;
+        margin: auto;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        background-color: white;
+    }
+    #edits_add_container{
+        height: 40px;
+        padding-top: -10px;
+        font-family: Calibri, Arial;
+    }
+    #edits_add_container button{
+        float: right;
+        margin-left: 10px;
+    }
+    #edits_add_container span{
+        margin-right: 10px;
+    }
+    #edits_add_container label{
+        font-size: 17px;
+    }
+    #edits_tool_container{
+        height: 30px;
+    }
+    #edits_tool_container button{
+        float: right;
+        margin-left: 10px;
+    }
+    button {
+        background-color:#44c767;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        border-radius:5px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:15px;
+        padding:2px 12px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;
+    }
+    button:hover {
+        background-color:#5ccf2a;
+    }
+    button:active {
+        position:relative;
+        top:1px;
+    }
+    button.red_button{
+        border:1px solid #843534;
+        background-color:#b92c28;
+    }
+    button.red_button:hover {
+        background-color:#c7254e;
+    }
+    button.blue_button{
+        border:1px solid #343584;
+        background-color:#284cb9;
+    }
+    button.blue_button:hover {
+        background-color:#3e45e7;
+    }
+    button.grey_button{
+        border:1px solid #444444;
+        background-color:#666666;
+    }
+    button.grey_button:hover {
+        background-color:#888888;
+    }
+    select{
+        height: 24px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 8px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
+    }
+    #message_container_bot{
+        z-index: 1500;
+        position: fixed;
+        left: 0;
+        bottom:50px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    #message_container_top{
+        z-index: 1500;
+        position: fixed;
+        left: 0;
+        top: 20px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    .msg_label{
+        margin: auto;
+        text-align: center;
+        width: 450px;
+        height: 30px;
+        padding-top: 10px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        font-family: Arial;
+        color: red;
+        background: #FFFFFF;
+        font-weight: bold;
+        display: block;
+        pointer-events: none;
+    }
+</style>
+<div id="timeline_container" ng-controller="TimelineController" ng-init="Init()">
+    <div id="timeline_chart_container">
+        <div id="timeline_date">
+            <span ng-click="prevDay()"> < </span>
+            <input ng-change="UpdateTimeline()" ng-model="ui_i_date" type="date" />
+            <span ng-click="nextDay()"> > </span>
+        </div>
+
+        <div id="timeline_chart_user"></div>
+    </div>
+
+    <div id="edits_container">
+        <div id="edits_add_container">
+            <hr />
+            <span>
+                <label>Start: </label>
+                <select ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
+                         ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
+            </span>
+            <span>
+                <label>End: </label>
+                <select ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
+                                                timeOptions.indexOf(ui_i_end) - 1 : timeOptions.indexOf(ui_i_start)]"
+                         ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
+            </span>
+
+            <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
+            <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
+            <button class="blue_button" ng-click="CommitAddingTime()">Add</button>
+
+        </div>
+        <div id="edits_tool_container">
+            <!--<button ng-show="user.login_privileged">Remove Meeting</button>-->
+            <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
+        </div>
+    </div>
+
+    <div id="message_container_bot">
+    </div>
+    <div id="message_container_top">
+    </div>
+</div>

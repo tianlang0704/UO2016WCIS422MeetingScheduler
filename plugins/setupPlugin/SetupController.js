@@ -2,10 +2,16 @@
  * Created by tianl on 2/28/2016.
  */
 
-myApp.controller("SetupController", function($scope, $state, BackendDataService)
+myApp.controller("SetupController", function($scope, $state, $cookieStore, BackendDataService)
 {
     $scope.Init = function()
     {
+        //Check login
+        $scope.user = $cookieStore.get("user");
+        if(!$scope.user.login_privileged)
+            return;
+
+        //Update table for the fist time
         $scope.UpdateUserTable();
     }
 
@@ -29,7 +35,7 @@ myApp.controller("SetupController", function($scope, $state, BackendDataService)
             {
                 console.log(data);
                 //simple code skip saving data to the model
-                $scope.$apply(function(){$scope.users = data;});
+                $scope.users = data;
             });
     }
 
@@ -43,22 +49,21 @@ myApp.controller("SetupController", function($scope, $state, BackendDataService)
         }
 
         //confirm and do user deletion
-        if(confirm("Are you sure that you want to delete user: " + $scope.ui_i_del_sel.username +
-            "\nWith display name: " + $scope.ui_i_del_sel.displayname))
+        if(confirm("Are you sure that you want to delete user: " + $scope.ui_i_del_sel.login_username +
+            "\nWith display name: " + $scope.ui_i_del_sel.login_displayname))
         {
-            BackendDataService.RemoveUser($scope.ui_i_del_sel.username).then(function(data)
+            BackendDataService.RemoveUser($scope.ui_i_del_sel.login_username).then(function(data)
             {
-                if(data.success)
+                if(data)
                     $scope.ShowMessage("User deletion succeeded");
                 else
                     $scope.ShowMessage("User deletion failed");
-
                 $scope.UpdateUserTable();
             });
         }
     }
 
-    $scope.CommitUserInfo = function()
+    $scope.CommitUserCreation = function()
     {
         //check input fields
         if($scope.user_add_form.username.$error.required ||
@@ -79,22 +84,21 @@ myApp.controller("SetupController", function($scope, $state, BackendDataService)
         }
 
         //do user creation
-        var pass = BackendDataService.sha512($scope.ui_i_password);
         BackendDataService.
-            AddUser($scope.ui_i_username, $scope.ui_i_dname, pass, $scope.ui_i_role).
+            AddUser($scope.ui_i_username, $scope.ui_i_dname, $scope.ui_i_password, $scope.ui_i_role).
             then(function(data)
             {
                 var msg;
-                if(data == -1)
-                    msg = "Failed creating new user!";
-                else {
-                    if(data == 0)
-                        msg = "An user with the role of 'Professor' is created";
-                    else
-                        msg = "An user with the role of 'Student' is created";
-                }
-                $scope.ShowMessage(msg);
+                if(data)
+                    $scope.ShowMessage("User creation succeeded");
+                else
+                    $scope.ShowMessage("User creation failed");
                 $scope.UpdateUserTable();
             });
+    }
+
+    $scope.Timeline = function()
+    {
+        $state.go("Timeline");
     }
 });

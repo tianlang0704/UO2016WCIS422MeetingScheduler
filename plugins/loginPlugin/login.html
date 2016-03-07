@@ -1,8 +1,9 @@
 <style>
-    #login_container{
+    .card{
         text-align: center;
         padding: 10px 20px;
-        width: 300px; margin: auto;
+        width: 300px;
+        margin: auto;
         border-radius: 5px;
         -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
@@ -84,10 +85,22 @@
     #login_button_container{
         text-align: center;
     }
+    #test_info{
+        margin-bottom: 40px;
+    }
 </style>
 
 <div id="login_container" ng-controller="LoginController" ng-init="Init()">
-    <div>
+    <div id="test_info" class="card">
+        <h4>Test professor account:</h4>
+        <div>Username: admin</div>
+        <div>Password: password</div>
+        <h4>Test student account:</h4>
+        <div>Username: student1</div>
+        <div>Password: 1111</div>
+    </div>
+
+    <div id="login_card" class="card" >
         <form name="login_form">
             <div>
                 <input class="login_input" name="login_username" ng-model="ui_i_username" placeholder="Username" required/>

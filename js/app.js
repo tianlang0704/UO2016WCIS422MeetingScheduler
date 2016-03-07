@@ -7,7 +7,8 @@ google.charts.setOnLoadCallback(function() {
 
 // Declare app level module which depends on views, and components
 var myApp = angular.module('myApp', [
-  'ui.router'
+  'ui.router',
+  'ngCookies'
 ]);
 
 myApp.config(function($urlRouterProvider, $stateProvider) {
@@ -44,6 +45,15 @@ myApp.config(function($urlRouterProvider, $stateProvider) {
               templateUrl: "plugins/loginPlugin/login.html"
           }
         }
-      });
+      })
+      .state("Timeline",{
+        url: '/Timeline',
+        views: {
+          'appView':{
+              templateUrl: "plugins/timelinePlugin/timeline.html"
+          }
+        }
+      });;
+
 });
 //angular.bootstrap(document.documentElement, ['myApp']);

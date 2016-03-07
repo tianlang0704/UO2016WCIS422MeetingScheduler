@@ -2,7 +2,7 @@
  * Created by CMonk on 3/5/2016.
  */
 
-myApp.controller("LoginController", function($scope, $state, BackendDataService)
+myApp.controller("LoginController", function($scope, $state, $cookieStore, BackendDataService)
 {
 
     $scope.ShowMessage = function(msg, isTop)
@@ -33,11 +33,14 @@ myApp.controller("LoginController", function($scope, $state, BackendDataService)
                 return false;
             }
 
-            BackendDataService.user = data;
+            $cookieStore.remove("user");
+            data.login_privileged = data.login_role == 10 ? true : false;
+            $cookieStore.put("user", data);
+
+
             $scope.ShowMessage("Login succeeded, Jump in 2 seconds", true);
             setTimeout(function(){
                 $state.go("Timeline");
-                //$scope.ShowMessage("Jumping", true);
             }, 2000);
         })
     }

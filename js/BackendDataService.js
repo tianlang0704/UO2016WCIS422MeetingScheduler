@@ -15,13 +15,7 @@ myApp.service('BackendDataService', function($http) {
             return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + password).then(function(data){
                 console.log(data);
                 if(data.data.length===1){
-                    var user = {};
-                    user.username = user;
-                    user.id = data.data[0].login_id;
-                    user.displayname = data.data[0].login_displayname;
-                    user.role = data.data[0].login_role;
-
-                    return user;
+                    return data.data[0];
                 }else{
                     return -1;
                 }
@@ -54,8 +48,8 @@ myApp.service('BackendDataService', function($http) {
                 returnMe.push([d.login_displayname, d.free_label, new Date(d.free_start*1000), new Date(d.free_end*1000)]);
                 console.log(d);
             });
-            returnMe.push([data[0].login_displayname, '', new Date(year,month,day,6,0,0,0), new Date(year,month,day,6,0,0,1)]);
-            returnMe.push([data[0].login_displayname, '', new Date(year,month,day,19,0,0,0), new Date(year,month,day,19,0,0,1)]);
+            //returnMe.push([data[0].login_displayname, '', new Date(year,month,day,6,0,0,0), new Date(year,month,day,6,0,0,1)]);
+            //returnMe.push([data[0].login_displayname, '', new Date(year,month,day,19,0,0,0), new Date(year,month,day,19,0,0,1)]);
             return returnMe;
             //attach a millisecond at 7am and a millisecond at 7pm for the single user or for all users
 
@@ -74,6 +68,10 @@ myApp.service('BackendDataService', function($http) {
         console.log(Start);
         return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting').then(function(data){
             //indicate success or failure
+            if(data.data.affectedRows > 0 || data.data.changedRows > 0)
+                return true;
+            else
+                return false;
         });
     };
 
@@ -98,6 +96,10 @@ myApp.service('BackendDataService', function($http) {
         console.log(Start);
         return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free').then(function(data){
             //indicate success or failure
+            if(data.data.affectedRows > 0 || data.data.changedRows > 0)
+                return true;
+            else
+                return false;
         });
     };
 
@@ -105,8 +107,11 @@ myApp.service('BackendDataService', function($http) {
 //        DELETE FROM FreeTime
 //    WHERE free_start = ‘$startTime’ AND free_end = ‘$endTime’ AND login_id = ‘$loginID’;
     this.RemoveFreeTimeForUser = function(Start, End, User){
+        Start = Start.getTime()/1000;
+        End = End.getTime()/1000;
         return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
             //indicate success or failure
+            return data.data.success;
         });
     };
 
@@ -126,7 +131,7 @@ myApp.service('BackendDataService', function($http) {
         return sha512(Password).then(function(pass){
             return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermissionsLevel).then(function(data){
                 //indicate success or failure
-                return data;
+                return data.data.success;
             });
         });
     };
@@ -135,7 +140,7 @@ myApp.service('BackendDataService', function($http) {
     this.RemoveUser = function(Username){
         return $http.get('http://qnap.tracehagan.com:30000/removeUser/' + Username).then(function(data){
             //indicate success or failure
-            return data;
+            return data.data.success;
         });
     };
 

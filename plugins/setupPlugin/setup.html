@@ -1,7 +1,8 @@
 <style>
     #setup_container{
         padding: 10px 20px;
-        width: 600px; margin: auto;
+        width: 600px;
+        margin: auto;
         border-radius: 5px;
         -moz-border-radius: 5px;
         -webkit-border-radius: 5px;
@@ -53,7 +54,7 @@
         -moz-border-radius: 4px;
         -webkit-border-radius: 4px;
         text-align: left;
-        padding:9px 5px;
+        padding:6px 5px;
     }
     table th{
         border-bottom: 2px solid black;
@@ -106,7 +107,7 @@
     }
     #user_add_button{
         margin-top: 10px;
-        margin-left: 280px;
+        margin-left: 220px;
     }
     select{
         width: 300px;
@@ -186,69 +187,74 @@
 </style>
 
 <div id="setup_container" ng-controller="SetupController" ng-init="Init()">
-    <div id="tool_bar"><input placeholder="Filter" ng-model="ui_i_filter"></div>
-
-    <div id="user_table_container">
-        <table id="user_table">
-            <thead>
+    <div ng-show="!user.login_privileged">
+        You are not supposed to be here!!
+    </div>
+    <div ng-show="user.login_privileged">
+        <div id="tool_bar"><input placeholder="Filter" ng-model="ui_i_filter"></div>
+        <div id="user_table_container">
+            <table id="user_table">
+                <thead>
                 <tr>
                     <th>ID</th>
                     <th>User Name</th>
                     <th>Disyplay Name</th>
                     <th>Role</th>
                 </tr>
-            </thead>
-            <tbody >
+                </thead>
+                <tbody >
                 <tr ng-repeat="user in users | filter:ui_i_filter">
-                    <td>{{user.id}}</td>
-                    <td>{{user.username}}</td>
-                    <td>{{user.displayname}}</td>
-                    <td>{{user.role == 0 ? "Professor" : "Student"}}</td>
+                    <td>{{user.login_id}}</td>
+                    <td>{{user.login_username}}</td>
+                    <td>{{user.login_displayname}}</td>
+                    <td>{{user.login_role == 10 ? "Professor" : "Student"}}</td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
 
-    <div id="user_edits_container">
-        <div class="user_delete_container">
-            <select id="user_delete_select"
-                    ng-options="user.displayname for user in users | filter:ui_i_filter track by user.id"
-                    ng-model="ui_i_del_sel">
-            </select>
-            <button class="red_button" id="user_delete_button" ng-click="CommitUserDeletion()">Delete</button>
+        <div id="user_edits_container">
+            <div class="user_delete_container">
+                <select id="user_delete_select"
+                        ng-options="user.login_displayname for user in users | filter:ui_i_filter track by user.login_id"
+                        ng-model="ui_i_del_sel">
+                </select>
+                <button class="red_button" id="user_delete_button" ng-click="CommitUserDeletion()">Delete</button>
+            </div>
+            <hr />
+            <div class="user_add_container">
+                <form name="user_add_form">
+                    <div class="user_add_field">
+                        <div class="user_add_label">Username </div>
+                        <input class="user_add_input" name="username" placeholder="Username" ng-model="ui_i_username" required/>
+                    </div>
+                    <div class="user_add_field">
+                        <div class="user_add_label">Password </div>
+                        <input class="user_add_input" name="password" placeholder="Password" type="password"  ng-model="ui_i_password" required/>
+                    </div>
+                    <div class="user_add_field">
+                        <div class="user_add_label">Retype Password </div>
+                        <input class="user_add_input" name="re_password" placeholder="Password" type="password" ng-model="ui_i_repassword" required/>
+                    </div>
+                    <div class="user_add_field">
+                        <div class="user_add_label">Display Name </div>
+                        <input class="user_add_input" name="display_name" placeholder="Display Name" ng-model="ui_i_dname" required/>
+                    </div>
+                    <div class="user_add_field">
+                        <div class="user_add_label">Role</div>
+                        <select name="role" ng-model="ui_i_role" required>
+                            <option value="10">Professor</option>
+                            <option value="20">Student</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <button id="user_add_button" ng-click="CommitUserCreation()">Add</button>
+            <button ng-click="Timeline()">Back to Timeline</button>
         </div>
-        <hr />
-        <div class="user_add_container">
-            <form name="user_add_form">
-                <div class="user_add_field">
-                    <div class="user_add_label">Username </div>
-                    <input class="user_add_input" name="username" placeholder="Username" ng-model="ui_i_username" required/>
-                </div>
-                <div class="user_add_field">
-                    <div class="user_add_label">Password </div>
-                    <input class="user_add_input" name="password" placeholder="Password" type="password"  ng-model="ui_i_password" required/>
-                </div>
-                <div class="user_add_field">
-                    <div class="user_add_label">Retype Password </div>
-                    <input class="user_add_input" name="re_password" placeholder="Password" type="password" ng-model="ui_i_repassword" required/>
-                </div>
-                <div class="user_add_field">
-                    <div class="user_add_label">Display Name </div>
-                    <input class="user_add_input" name="display_name" placeholder="Display Name" ng-model="ui_i_dname" required/>
-                </div>
-                <div class="user_add_field">
-                    <div class="user_add_label">Role</div>
-                    <select name="role" ng-model="ui_i_role" required>
-                        <option value="0">Professor</option>
-                        <option value="1">Student</option>
-                    </select>
-                </div>
-            </form>
+        <div id="message_container_bot">
         </div>
-        <button id="user_add_button" ng-click="CommitUserInfo()">Add</button>
-    </div>
-    <div id="message_container_bot">
-    </div>
-    <div id="message_container_top">
+        <div id="message_container_top">
+        </div>
     </div>
 </div>
