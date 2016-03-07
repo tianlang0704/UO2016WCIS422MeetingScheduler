@@ -1,0 +1,254 @@
+<style>
+    #setup_container{
+        padding: 10px 20px;
+        width: 600px; margin: auto;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+    }
+    #tool_bar{
+        text-align: right;
+        padding-right: 20px;
+    }
+    #user_table_container {
+        height: 400px;
+        width: 600px;
+        margin-top: 10px;
+    }
+    #user_table{
+        width: 100%;
+    }
+    tr{
+        border: 1px solid gray;
+        border-collapse: collapse;
+        font-family: Calibri, "Times New Roman";
+    }
+    thead{
+        display: block;
+        position: relative;
+    }
+    tbody{
+        height: 350px;
+        display: block;
+        overflow-y: scroll;
+    }
+    td:nth-child(1), th:nth-child(1) { min-width: 40px; }
+    td:nth-child(2), th:nth-child(2) { min-width: 150px; }
+    td:nth-child(3), th:nth-child(3) { min-width: 250px; }
+    td:nth-child(4) { width: 100px; }
+    th:nth-child(4) { width: 90px; }
+    tbody tr:nth-child(even){
+        background-color: lightgray;
+    }
+    tbody tr:nth-child(odd){
+        background-color: #F0F0F0;
+    }
+    tbody tr:hover{
+        background:#BDC3C7;
+        color:#FFFFFF;
+    }
+    table th, td{
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        text-align: left;
+        padding:9px 5px;
+    }
+    table th{
+        border-bottom: 2px solid black;
+        background-color: #555555;
+        color: white;
+        text-align: center;
+    }
+    .selected {
+        background-color: brown;
+        color: #FFF;
+    }
+    #user_edits_container{
+        height: 240px;
+        width: 600px;
+        margin-top: 10px;
+        padding: 10px 10px;
+    }
+    #user_delete_select{
+        width: 250px;
+        margin-right:20px;
+    }
+    .user_delete_container{
+        width: 100%;
+        display: inline-block;
+        padding-left: 174px;
+    }
+    .user_add_field{
+        margin-top: 5px;
+    }
+    .user_add_label{
+        width: 150px;
+        padding-right: 20px;
+        color: #2b669a;
+        font-weight: 600;
+        text-align: right;
+        display: inline-block;
+        font-family: Arial, Calibri;
+    }
+    .user_add_input {
+        width: 300px;
+        height: 23px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
+    }
+    #user_add_button{
+        margin-top: 10px;
+        margin-left: 280px;
+    }
+    select{
+        width: 300px;
+        height: 27px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 8px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
+    }
+
+    button {
+        background-color:#44c767;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        border-radius:5px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:2px 12px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;
+    }
+    button:hover {
+        background-color:#5cbf2a;
+    }
+    button:active {
+        position:relative;
+        top:1px;
+    }
+    button.red_button{
+        border:1px solid #843534;
+        background-color:#b92c28;
+    }
+    button.red_button:hover {
+        background-color:#c7254e;
+    }
+    #message_container_bot{
+        position: fixed;
+        left: 0;
+        bottom:50px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    #message_container_top{
+        position: fixed;
+        left: 0;
+        top: 20px;
+        width:100%;
+        opacity: 1;
+        pointer-events: none;
+    }
+    .msg_label{
+        margin: auto;
+        text-align: center;
+        width: 450px;
+        height: 30px;
+        padding-top: 10px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+        font-family: Arial;
+        color: red;
+        background: #FFFFFF;
+        font-weight: bold;
+        display: block;
+        pointer-events: none;
+    }
+</style>
+
+<div id="setup_container" ng-controller="SetupController" ng-init="Init()">
+    <div id="tool_bar"><input placeholder="Filter" ng-model="ui_i_filter"></div>
+
+    <div id="user_table_container">
+        <table id="user_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Disyplay Name</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody >
+                <tr ng-repeat="user in users | filter:ui_i_filter">
+                    <td>{{user.id}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.displayname}}</td>
+                    <td>{{user.role == 0 ? "Professor" : "Student"}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="user_edits_container">
+        <div class="user_delete_container">
+            <select id="user_delete_select"
+                    ng-options="user.displayname for user in users | filter:ui_i_filter track by user.id"
+                    ng-model="ui_i_del_sel">
+            </select>
+            <button class="red_button" id="user_delete_button" ng-click="CommitUserDeletion()">Delete</button>
+        </div>
+        <hr />
+        <div class="user_add_container">
+            <form name="user_add_form">
+                <div class="user_add_field">
+                    <div class="user_add_label">Username </div>
+                    <input class="user_add_input" name="username" placeholder="Username" ng-model="ui_i_username" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Password </div>
+                    <input class="user_add_input" name="password" placeholder="Password" type="password"  ng-model="ui_i_password" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Retype Password </div>
+                    <input class="user_add_input" name="re_password" placeholder="Password" type="password" ng-model="ui_i_repassword" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Display Name </div>
+                    <input class="user_add_input" name="display_name" placeholder="Display Name" ng-model="ui_i_dname" required/>
+                </div>
+                <div class="user_add_field">
+                    <div class="user_add_label">Role</div>
+                    <select name="role" ng-model="ui_i_role" required>
+                        <option value="0">Professor</option>
+                        <option value="1">Student</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <button id="user_add_button" ng-click="CommitUserInfo()">Add</button>
+    </div>
+    <div id="message_container_bot">
+    </div>
+    <div id="message_container_top">
+    </div>
+</div>

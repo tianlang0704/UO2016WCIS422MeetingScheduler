@@ -15,9 +15,13 @@ myApp.service('BackendDataService', function($http) {
             return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + password).then(function(data){
                 console.log(data);
                 if(data.data.length===1){
-                    if(data.data[0].login_role){
-                        return data.data[0].login_role;
-                    }
+                    var user = {};
+                    user.username = user;
+                    user.id = data.data[0].login_id;
+                    user.displayname = data.data[0].login_displayname;
+                    user.role = data.data[0].login_role;
+
+                    return user;
                 }else{
                     return -1;
                 }
@@ -169,6 +173,7 @@ myApp.service('BackendDataService', function($http) {
             return hex(hash);
         });
     };
+    this.sha512 = sha512;
 
     var hex = function(buffer) {
         var hexCodes = [];

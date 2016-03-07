@@ -6,4 +6,10 @@ myApp.controller("MainController", function($scope, $state){
     $scope.examplePlugin = function (){
         $state.go('Example');
     };
+    $scope.setupPlugin = function (){
+        $state.go('Setup');
+    };
+    $scope.loginPlugin = function (){
+        $state.go('Login');
+    };
 });

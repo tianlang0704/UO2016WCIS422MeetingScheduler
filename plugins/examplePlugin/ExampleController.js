@@ -21,7 +21,6 @@ myApp.controller("ExampleController", function($scope, $state, BackendDataServic
         BackendDataService.GetAllTimesBetweenDates(new Date(2016,2,4,0,0,0), new Date(2016,2,4,23,59,0)).then(function(data){
             console.log(data);
             function drawChart() {
-
                 var container = document.getElementById('timeline');
                 console.debug(container);
                 var chart = new google.visualization.Timeline(container);
