@@ -27,6 +27,12 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
 
         BackendDataService.CheckLogin($scope.ui_i_username, $scope.ui_i_password).then(function(data)
         {
+            alert(data);
+            if(data == -2)
+            {
+                $scope.ShowMessage("Please use https instead of http", true);
+                return false;
+            }
             if(data == -1)
             {
                 $scope.ShowMessage("Login failed", true);
@@ -42,6 +48,6 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
             setTimeout(function(){
                 $state.go("Timeline");
             }, 2000);
-        })
+        });
     }
 });

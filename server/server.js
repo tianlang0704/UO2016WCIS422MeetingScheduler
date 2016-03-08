@@ -60,7 +60,7 @@ res.sendfile('index.html');
 */
 app.get('/checkLogin/:user/:pass',function(req,res){
 
-connection.query("SELECT login_role FROM Login WHERE login_username = '" + req.params.user + "' AND login_password = '" + req.params.pass + "';",function(err,rows){
+connection.query("SELECT login_id, login_username, login_displayname, login_role  FROM Login WHERE login_username = '" + req.params.user + "' AND login_password = '" + req.params.pass + "';",function(err,rows){
 if(err)
 {
 console.log("Problem with MySQL"+err);

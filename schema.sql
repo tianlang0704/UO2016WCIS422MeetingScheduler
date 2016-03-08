@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Login` (
   `login_username` VARCHAR(45) NOT NULL,
   `login_displayname` VARCHAR(45) NOT NULL,
   `login_role` TINYINT NOT NULL,
-  `login_password` BINARY(64) NOT NULL,
+  `login_password` BINARY(128) NOT NULL,
   PRIMARY KEY (`login_id`))
 ENGINE = InnoDB;
 

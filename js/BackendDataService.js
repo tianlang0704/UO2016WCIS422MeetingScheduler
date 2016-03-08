@@ -1,5 +1,8 @@
 myApp.service('BackendDataService', function($http) {
 
+    //var db_server = "http://qnap.tracehagan.com:30000";
+    var db_server = "https://uo-cis422-test1.appspot.com";
+    //db_server = "http://localhost:8080";
 //    Database Queries
 
 //    Check Schedule Meeting is within Free Time
@@ -11,8 +14,16 @@ myApp.service('BackendDataService', function($http) {
 
     // Functions, returns -1 if no user, value for role if user exists
     this.CheckLogin = function(user, pass){
-        return sha512(pass).then(function(password){
-            return $http.get('http://qnap.tracehagan.com:30000/checkLogin/' + user + "/" + password).then(function(data){
+        return sha512(pass).
+        catch(function(err){
+            alert(err.code);
+            if(err.code == DOMException.NOT_SUPPORTED_ERR)
+                return DOMException.NOT_SUPPORTED_ERR;
+        }).
+        then(function(password){
+            if(password == DOMException.NOT_SUPPORTED_ERR)
+                return -2;
+            return $http.get(db_server + '/checkLogin/' + user + "/" + password).then(function(data){
                 console.log(data);
                 if(data.data.length===1){
                     return data.data[0];
@@ -32,7 +43,7 @@ myApp.service('BackendDataService', function($http) {
         //date.getDate date.getMonth date.getFullYear
         S = Start.getTime()/1000;
         E = End.getTime()/1000;
-        return $http.get('http://qnap.tracehagan.com:30000/getAllTimesBetweenDates/' + S + '/' + E + '/' + User).then(function(rawdata){
+        return $http.get(db_server + '/getAllTimesBetweenDates/' + S + '/' + E + '/' + User).then(function(rawdata){
             //process and format data for Google Charts, if needed (Server implementation could affect
             var day = Start.getDate();
             var month = Start.getMonth();
@@ -66,7 +77,7 @@ myApp.service('BackendDataService', function($http) {
         End = End.getTime()/1000;
         console.log(End);
         console.log(Start);
-        return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting').then(function(data){
+        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting').then(function(data){
             //indicate success or failure
             if(data.data.affectedRows > 0 || data.data.changedRows > 0)
                 return true;
@@ -79,7 +90,7 @@ myApp.service('BackendDataService', function($http) {
 //        DELETE FROM FreeTime
 //    WHERE free_start = ‘$startTime’ AND free_end = ‘$endTime’ AND login_id = ‘$loginID’;
     this.RemoveMeetingForUser = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
+        return $http.get(db_server + '/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
             //indicate sucess or failure
         });
     };
@@ -94,7 +105,7 @@ myApp.service('BackendDataService', function($http) {
         End = End.getTime()/1000;
         console.log(End);
         console.log(Start);
-        return $http.get('http://qnap.tracehagan.com:30000/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free').then(function(data){
+        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free').then(function(data){
             //indicate success or failure
             if(data.data.affectedRows > 0 || data.data.changedRows > 0)
                 return true;
@@ -109,7 +120,7 @@ myApp.service('BackendDataService', function($http) {
     this.RemoveFreeTimeForUser = function(Start, End, User){
         Start = Start.getTime()/1000;
         End = End.getTime()/1000;
-        return $http.get('http://qnap.tracehagan.com:30000/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
+        return $http.get(db_server + '/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
             //indicate success or failure
             return data.data.success;
         });
@@ -117,7 +128,7 @@ myApp.service('BackendDataService', function($http) {
 
     //Implemented, needs testing
     this.GetAllUsers = function(){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllUsers').then(function(data){
+        return $http.get(db_server + '/getAllUsers').then(function(data){
             //return array of user objects
             if(data.data.length > 0) {
                 return data.data;
@@ -129,7 +140,7 @@ myApp.service('BackendDataService', function($http) {
 //    Functions, returns object
     this.AddUser = function(Username, DisplayName, Password, PermissionsLevel){
         return sha512(Password).then(function(pass){
-            return $http.get('http://qnap.tracehagan.com:30000/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermissionsLevel).then(function(data){
+            return $http.get(db_server + '/createUser/' + Username + '/' + DisplayName + '/' + pass + '/' + PermissionsLevel).then(function(data){
                 //indicate success or failure
                 return data.data.success;
             });
@@ -138,7 +149,7 @@ myApp.service('BackendDataService', function($http) {
 
 //    Implemented, need to test
     this.RemoveUser = function(Username){
-        return $http.get('http://qnap.tracehagan.com:30000/removeUser/' + Username).then(function(data){
+        return $http.get(db_server + '/removeUser/' + Username).then(function(data){
             //indicate success or failure
             return data.data.success;
         });
@@ -146,24 +157,24 @@ myApp.service('BackendDataService', function($http) {
 
     //Todo: Queries, implement
     this.ResetDatabase = function(){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
+        return $http.get(db_server + '/getAllFreeTime').then(function(data){
             //indicate success or failure
             return data;
         });
     };
     this.GetMeetingsToPopulateBox = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
+        return $http.get(db_server + '/getAllFreeTime').then(function(data){
             //array of time objects?
         });
     };
     this.GetFreeTimesToPopulateBox = function(Start, End, User){
-        return $http.get('http://qnap.tracehagan.com:30000/getAllFreeTime').then(function(data){
+        return $http.get(db_server + '/getAllFreeTime').then(function(data){
             //array of time objects?
         });
     };
 
     this.GetUserIDByUserName = function(username){
-        return $http.get('http://qnap.tracehagan.com:30000/getIDforUser/' + username).then(function(data){
+        return $http.get(db_server + '/getIDforUser/' + username).then(function(data){
             //array of time objects?
             return data.data[0].login_id;
         });
