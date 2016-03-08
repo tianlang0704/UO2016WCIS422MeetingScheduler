@@ -16,7 +16,6 @@ myApp.service('BackendDataService', function($http) {
     this.CheckLogin = function(user, pass){
         return sha512(pass).
         catch(function(err){
-            alert(err.code);
             if(err.code == DOMException.NOT_SUPPORTED_ERR)
                 return DOMException.NOT_SUPPORTED_ERR;
         }).

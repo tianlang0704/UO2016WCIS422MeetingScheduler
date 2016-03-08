@@ -27,7 +27,6 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
 
         BackendDataService.CheckLogin($scope.ui_i_username, $scope.ui_i_password).then(function(data)
         {
-            alert(data);
             if(data == -2)
             {
                 $scope.ShowMessage("Please use https instead of http", true);
