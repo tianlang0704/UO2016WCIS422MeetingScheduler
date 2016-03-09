@@ -30,13 +30,7 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
     $scope.UpdateUserTable = function()
     {
         $scope.ShowMessage("Loading users", true);
-        BackendDataService.GetAllUsers()
-            .then(function(data)
-            {
-                console.log(data);
-                //simple code skip saving data to the model
-                $scope.users = data;
-            });
+        BackendDataService.GetAllUsers().then(function(data) {$scope.users = data;});
     }
 
     $scope.CommitUserDeletion = function()

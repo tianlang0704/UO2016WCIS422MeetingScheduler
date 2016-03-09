@@ -11,8 +11,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         if(!$scope.user)
             $state.go('Login');
 
-        //Init chart and data table
-        $scope.ui_o_dataTable = {};
+        //Init chart
         var container = document.getElementById('timeline_chart_user');
         $scope.ui_o_chart = new google.visualization.Timeline(container);
 
@@ -20,9 +19,12 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         //Setting start and end select value when time frame in chart is clicked
         google.visualization.events.addListener($scope.ui_o_chart, 'select', function(){
             var selected = $scope.ui_o_chart.getSelection(); //find selected time
+            //set the target user id
+            if($scope.users)
+                $scope.ui_i_target = $scope.users.find(function(element){return element.login_displayname == $scope.timelineModel.data[selected[0].row][0]});
             //find their relative offset in the day in minutes
-            var startDate = $scope.ui_o_dataTable.getValue(selected[0].row, 2); //getting start date from 1970 to start
-            var endDate = $scope.ui_o_dataTable.getValue(selected[0].row, 3); //getting end date from 1970 to end
+            var startDate = $scope.timelineModel.data[selected[0].row][2]; //getting start date from 1970 to start
+            var endDate = $scope.timelineModel.data[selected[0].row][3]; //getting end date from 1970 to end
             var baseDate = new Date(startDate.getTime()); //getting base date from 1970 to today's 0am
             baseDate.setHours(0,0,0,0);
             var startOffsetTime = Math.abs(baseDate - startDate) / 60000; //get start time in offset in minutes
@@ -43,11 +45,18 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         //Generate options for time
         $scope.timeOptions = OptionGenerator();
 
-        //Initialize date
+        //Initialize necessary ui models
         $scope.ui_i_date = new Date();
+        $scope.timelineModel = {};
 
         //Update time line for the first time
         $scope.UpdateTimeline();
+
+        //Init user list if is privileged user
+        if($scope.user.login_privileged)
+            BackendDataService.GetAllUsers().then(function(data) {
+                $scope.users = data;
+            });
     };
 
     //Insert message into the containers user jQuery Animations
@@ -103,18 +112,21 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
     //Show time line with data and options
     $scope.ShowTimeline = function(data, newOpt)
     {
-        $scope.ui_o_dataTable = new google.visualization.DataTable();
-        $scope.ui_o_dataTable.addColumn({ type: 'string', id: 'Room' });
-        $scope.ui_o_dataTable.addColumn({ type: 'string', id: 'Name' });
-        $scope.ui_o_dataTable.addColumn({ type: 'date', id: 'Start' });
-        $scope.ui_o_dataTable.addColumn({ type: 'date', id: 'End' });
-        $scope.ui_o_dataTable.addRows(data);
+        var dataTable = {};
+        dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ type: 'string', id: 'Room' });
+        dataTable.addColumn({ type: 'string', id: 'Name' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        var tempData = [];
+        data.forEach(function(i){tempData.push(i.slice(0, 4));});
+        dataTable.addRows(tempData);
 
         var options = {
             timeline: { colorByRowLabel: true }
         };
         for (var attrname in newOpt) { options[attrname] = newOpt[attrname]; }
-        $scope.ui_o_chart.draw($scope.ui_o_dataTable, options);
+        $scope.ui_o_chart.draw(dataTable, options);
         //hide short place holders
         (function(){                                            //anonymous self calling function to prevent variable name conficts
             var container = document.getElementById("timeline_chart_user");
@@ -160,22 +172,19 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         end.setHours(param_end,0,0,0);
 
         //Get data from server and then update timeline
-        //
         $scope.ShowMessage("Updating timeline");
-        BackendDataService.GetAllTimesBetweenDatesForUser(start, end, $scope.user.login_privileged ? null : $scope.user.login_id).
+        BackendDataService.GetAllTimesBetweenDatesForUser(start, end, $scope.user.login_id).
         then(function(data)
         {
-            $scope.timelineModel = {};
-            $scope.timelineModel.opt = {
-                hAxis: {
-                    format: 'HH:mm',
-                    minValue: start,
-                    maxValue: end
-                    //, viewWindow:{min: start, max: end}
-                }};
-            var baseArray = [[ $scope.user.login_displayname, "", start, start]];
-            $scope.timelineModel.data = baseArray.concat(data);
-            $scope.ShowTimeline( $scope.timelineModel.data, $scope.timelineModel.opt);
+            var currentUserSchedule = [[ $scope.user.login_displayname, "", start, start, undefined]];
+            currentUserSchedule = currentUserSchedule.concat(data);
+
+            BackendDataService.GetAllTimesBetweenDatesForRole(start, end, $scope.user.login_role == 10 ? 20 : 10).
+            then(function(data2){
+                $scope.timelineModel.opt = {hAxis: {format: 'HH:mm', minValue: start, maxValue: end}};
+                $scope.timelineModel.data = currentUserSchedule.concat(data2);
+                $scope.ShowTimeline( $scope.timelineModel.data, $scope.timelineModel.opt);
+            });
         });
     };
 
@@ -195,6 +204,12 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
             $scope.ShowMessage("Please login first", true);
             return false;
         }
+        //target check
+        if(isMeeting && !$scope.ui_i_target)
+        {
+            $scope.ShowMessage("Please select the target to meet with", true);
+            return false;
+        }
 
         var start = new Date($scope.ui_i_date.getTime());
         start.setHours(0,$scope.ui_i_start.offsetInMins,0,0);
@@ -210,7 +225,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
             $scope.UpdateTimeline();
         }
         if(isMeeting)
-            BackendDataService.AddMeetingForUser(start, end, $scope.user.login_id).then(function(data){AddTimeNotify(data);});
+            BackendDataService.AddMeetingForUser(start, end, $scope.user.login_id, $scope.ui_i_target.login_id).then(function(data){AddTimeNotify(data);});
         else
             BackendDataService.AddFreeTimeForUser(start, end, $scope.user.login_id).then(function(data){AddTimeNotify(data);});
     };

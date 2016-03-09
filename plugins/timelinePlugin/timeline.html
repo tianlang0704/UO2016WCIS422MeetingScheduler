@@ -20,7 +20,9 @@
         -ms-user-select: none;
         background-color: white;
     }
-
+    #timeline_wrapper_container{
+        text-align: center;
+    }
     #timeline_date{
         height: 30px;
     }
@@ -31,13 +33,13 @@
         font-size: 16px;
         margin: 5px;
         user-select: none;
-
     }
     #edits_container{
         position: relative;
+        display:inline-block;
+        margin: 100px;
         top: -10px;
         padding: 10px 20px;
-        width: 560px;
         margin: auto;
         border-radius: 5px;
         -moz-border-radius: 5px;
@@ -45,26 +47,37 @@
         box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
         background-color: white;
     }
-    #edits_add_container{
-        height: 40px;
+    #edits_select_container{
         padding-top: -10px;
         font-family: Calibri, Arial;
     }
-    #edits_add_container button{
-        float: right;
+    #edits_select_container button{
         margin-left: 10px;
     }
-    #edits_add_container span{
+    #edits_select_container span{
         margin-right: 10px;
     }
-    #edits_add_container label{
+    #edits_select_container label{
         font-size: 17px;
     }
-    #edits_tool_container{
+    #edits_select_container select{
+        max-width: 130px;
+        height: 24px;
+        font-family: Arial, Calibri;
+        font-size:16px;
+        padding-left: 2px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        box-shadow: inset 0 1px 3px #dddddd;
+    }
+    #edits_button_container{
+        margin-top:10px;
+        margin-left:32px;
         height: 30px;
     }
-    #edits_tool_container button{
-        float: right;
+    #edits_button_container button{
         margin-left: 10px;
     }
     button {
@@ -110,17 +123,6 @@
     button.grey_button:hover {
         background-color:#777777;
     }
-    select{
-        height: 24px;
-        font-family: Arial, Calibri;
-        font-size:16px;
-        padding-left: 8px;
-        border: 1px solid #cccccc;
-        border-radius: 4px;
-        -moz-border-radius: 4px;
-        -webkit-border-radius: 4px;
-        box-shadow: inset 0 1px 3px #dddddd;
-    }
     #message_container_bot{
         z-index: 1500;
         position: fixed;
@@ -161,7 +163,7 @@
     <div ng-show="!user">
         Please login first
     </div>
-    <div ng-show="user">
+    <div ng-show="user" id="timeline_wrapper_container">
         <div id="timeline_chart_container">
             <div id="timeline_date">
                 <span ng-click="prevDay()"> < </span>
@@ -173,28 +175,31 @@
         </div>
 
         <div id="edits_container">
-            <div id="edits_add_container">
+            <div id="edits_select_container">
                 <hr />
-            <span>
-                <label>Start: </label>
-                <select ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
-                        ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
-            </span>
-            <span>
-                <label>End: </label>
-                <select ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
-                                                timeOptions.indexOf(ui_i_end) - 1 : timeOptions.indexOf(ui_i_start)]"
-                        ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
-            </span>
-
-                <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
-                <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
-                <button class="blue_button" ng-click="CommitAddingTime()">Add Free</button>
-
-            </div>
-            <div id="edits_tool_container">
-                <!--<button ng-show="user.login_privileged">Remove Meeting</button>-->
-                <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
+                <div>
+                    <span>
+                    <label>Start: </label>
+                    <select ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
+                            ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
+                    </span>
+                    <span>
+                        <label>End: </label>
+                        <select ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
+                                                        timeOptions.indexOf(ui_i_end) - 1 : timeOptions.indexOf(ui_i_start)]"
+                                ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
+                    </span>
+                    <span ng-show="user.login_privileged">
+                        <label>With: </label>
+                        <select ng-model="ui_i_target" ng-options="user as user.login_displayname for user in users"></select>
+                    </span>
+                </div>
+                <div id="edits_button_container">
+                    <button class="blue_button" ng-click="CommitAddingTime()">Add Free</button>
+                    <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
+                    <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
+                    <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
+                </div>
             </div>
         </div>
 

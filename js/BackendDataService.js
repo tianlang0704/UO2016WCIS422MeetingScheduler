@@ -31,6 +31,29 @@ myApp.service('BackendDataService', function($http) {
             });
         });
     };
+
+    // Functions, formats data correctly for role
+    this.GetAllTimesBetweenDatesForRole = function(Start, End, Role){
+        //date.getDate date.getMonth date.getFullYear
+        S = Start.getTime()/1000;
+        E = End.getTime()/1000;
+        return $http.get(db_server + '/getAllTimesBetweenDatesForRole/' + S + '/' + E + '/' + Role).then(function(rawdata){
+            //process and format data for Google Charts, if needed (Server implementation could affect
+            var day = Start.getDate();
+            var month = Start.getMonth();
+            var year = Start.getFullYear();
+            var data = rawdata.data;
+            var returnMe = [];
+            console.log(data);
+            data.forEach(function(d){
+                var label = d.free_label == "Free" ? d.free_label : d.target_displayname;
+                returnMe.push([d.login_displayname, label, new Date(d.free_start*1000), new Date(d.free_end*1000), d.login_target_id]);
+                console.log(d);
+            });
+            return returnMe;
+        });
+    };
+
     // functions
     this.GetAllTimesBetweenDates = function(Start, End){
         return this.GetAllTimesBetweenDatesForUser(Start, End, null);
@@ -46,27 +69,20 @@ myApp.service('BackendDataService', function($http) {
             var day = Start.getDate();
             var month = Start.getMonth();
             var year = Start.getFullYear();
-            //new Date(year,month,day,7,0,0,0)
-            //new Date(year,month,day,7,0,0,1)
-            //new Date(year,month,day,19,0,0,0)
-            //new Date(year,month,day,19,0,0,1)
             var data = rawdata.data;
             var returnMe = [];
             console.log(data);
             data.forEach(function(d){
-                returnMe.push([d.login_displayname, d.free_label, new Date(d.free_start*1000), new Date(d.free_end*1000)]);
+                var label = d.free_label == "Free" ? d.free_label : d.target_displayname;
+                returnMe.push([d.login_displayname, label, new Date(d.free_start*1000), new Date(d.free_end*1000), d.login_target_id]);
                 console.log(d);
             });
-            //returnMe.push([data[0].login_displayname, '', new Date(year,month,day,6,0,0,0), new Date(year,month,day,6,0,0,1)]);
-            //returnMe.push([data[0].login_displayname, '', new Date(year,month,day,19,0,0,0), new Date(year,month,day,19,0,0,1)]);
             return returnMe;
-            //attach a millisecond at 7am and a millisecond at 7pm for the single user or for all users
-
         });
     };
 
 // Functions
-    this.AddMeetingForUser = function(Start, End, User){
+    this.AddMeetingForUser = function(Start, End, User, Target){
         console.log(End);
         console.log(Start);
         console.log(End.getMilliseconds());
@@ -75,21 +91,12 @@ myApp.service('BackendDataService', function($http) {
         End = End.getTime()/1000;
         console.log(End);
         console.log(Start);
-        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting').then(function(data){
+        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Meeting/' + Target).then(function(data){
             //indicate success or failure
             if(data.data.affectedRows > 0 || data.data.changedRows > 0)
                 return true;
             else
                 return false;
-        });
-    };
-
-//    Delete Time For User (Login Id can be changed to username if needed)
-//        DELETE FROM FreeTime
-//    WHERE free_start = ‘$startTime’ AND free_end = ‘$endTime’ AND login_id = ‘$loginID’;
-    this.RemoveMeetingForUser = function(Start, End, User){
-        return $http.get(db_server + '/removeTimeForUser/' + Start + '/' + End + '/' + User).then(function(data){
-            //indicate sucess or failure
         });
     };
 
@@ -103,7 +110,7 @@ myApp.service('BackendDataService', function($http) {
         End = End.getTime()/1000;
         console.log(End);
         console.log(Start);
-        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free').then(function(data){
+        return $http.get(db_server + '/createTimeForUser/' + Start + '/' + End + '/' + User + '/Free/null').then(function(data){
             //indicate success or failure
             if(data.data.affectedRows > 0 || data.data.changedRows > 0)
                 return true;
