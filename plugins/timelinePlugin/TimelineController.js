@@ -8,6 +8,8 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
     {
         //Check login
         $scope.user = $cookieStore.get("user");
+        if(!$scope.user)
+            $state.go('Login');
 
         //Init chart and data table
         $scope.ui_o_dataTable = {};
@@ -134,7 +136,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         })();
     };
 
-    //Update timeline model with date bar input and use ShowTimeLine to refresh it on the page.
+    //Update timeline model with date bar input and use ShowTimeline to refresh it on the page.
     //Input: optional, int, starting hour in a day
     //       optional, int, ending hour in a day
     $scope.UpdateTimeline = function(param_start, param_end)
@@ -158,8 +160,9 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         end.setHours(param_end,0,0,0);
 
         //Get data from server and then update timeline
+        //
         $scope.ShowMessage("Updating timeline");
-        BackendDataService.GetAllTimesBetweenDatesForUser(start, end, $scope.user.login_id).
+        BackendDataService.GetAllTimesBetweenDatesForUser(start, end, $scope.user.login_privileged ? null : $scope.user.login_id).
         then(function(data)
         {
             $scope.timelineModel = {};
@@ -170,11 +173,8 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
                     maxValue: end
                     //, viewWindow:{min: start, max: end}
                 }};
-            if(data.length > 0)
-                $scope.timelineModel.data = data;
-            else
-                $scope.timelineModel.data = [[ $scope.user.login_displayname, "", start, start]];;
-
+            var baseArray = [[ $scope.user.login_displayname, "", start, start]];
+            $scope.timelineModel.data = baseArray.concat(data);
             $scope.ShowTimeline( $scope.timelineModel.data, $scope.timelineModel.opt);
         });
     };

@@ -8,7 +8,7 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
     {
         //Check login
         $scope.user = $cookieStore.get("user");
-        if(!$scope.user.login_privileged)
+        if(!$scope.user || !$scope.user.login_privileged)
             return;
 
         //Update table for the fist time

@@ -12,7 +12,7 @@ var myApp = angular.module('myApp', [
 ]);
 
 myApp.config(function($urlRouterProvider, $stateProvider) {
-  $urlRouterProvider.otherwise('/home');
+  $urlRouterProvider.otherwise('/Login');
   $stateProvider
       .state("home", {
         url: "/home",

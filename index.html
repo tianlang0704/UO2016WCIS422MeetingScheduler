@@ -22,9 +22,50 @@
   <script src="plugins/loginPlugin/LoginController.js"></script>
   <script src="plugins/timelinePlugin/TimelineController.js"></script>
   <!--add script includes above-->
+  <style>
+    body{
+      margin: 0;
+    }
+    .navbar{
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.4), 0 3px 20px 0 rgba(0, 0, 0, 0.20);
+    }
+    .navbar ul{
+      margin-top:0;
+      height: 40px;
+      background-color: #46D;
+      list-style-type: none;
+      text-align: right;
+      overflow: hidden;
+    }
 
+    .navbar li {
+      display: inline-block;
+      cursor: pointer;
+    }
+    .navbar li div{
+      padding: 10px 16px;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-family: "Calibri Light", Arial;
+      font-weight:bold;
+    }
+    .navbar li div:hover {
+      background-color: #333;
+    }
+  </style>
 </head>
+
 <body data-ng-controller="MainController">
+  <div class = 'navbar'>
+    <ul>
+      <li class="navbar-logo"><div ng-click="timelinePlugin()">Duck Meet</div></li>
+      <li ng-cloak ng-show="login_privileged" class="navbar-options"><div ng-click="setupPlugin()">Setup</div></li>
+      <li class="navbar-options"><div ng-click="loginPlugin()">Logout</div></li>
+    </ul>
+  </div>
   <div ui-view="appView"></div>
 </body>
 </html>

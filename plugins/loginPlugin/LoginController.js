@@ -29,7 +29,7 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
         {
             if(data == -2)
             {
-                $scope.ShowMessage("Please use https instead of http", true);
+                $scope.ShowMessage("Connection fail (Use Https?)", true);
                 return false;
             }
             if(data == -1)

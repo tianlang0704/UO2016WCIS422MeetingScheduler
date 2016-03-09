@@ -16,11 +16,10 @@ myApp.service('BackendDataService', function($http) {
     this.CheckLogin = function(user, pass){
         return sha512(pass).
         catch(function(err){
-            if(err.code == DOMException.NOT_SUPPORTED_ERR)
-                return DOMException.NOT_SUPPORTED_ERR;
+            return -2;
         }).
         then(function(password){
-            if(password == DOMException.NOT_SUPPORTED_ERR)
+            if(password == -2)
                 return -2;
             return $http.get(db_server + '/checkLogin/' + user + "/" + password).then(function(data){
                 console.log(data);

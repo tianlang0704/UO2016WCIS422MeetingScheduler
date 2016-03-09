@@ -37,7 +37,7 @@
         position: relative;
         top: -10px;
         padding: 10px 20px;
-        width: 550px;
+        width: 560px;
         margin: auto;
         border-radius: 5px;
         -moz-border-radius: 5px;
@@ -94,21 +94,21 @@
         background-color:#b92c28;
     }
     button.red_button:hover {
-        background-color:#c7254e;
+        background-color:#c7355e;
     }
     button.blue_button{
         border:1px solid #343584;
-        background-color:#284cb9;
+        background-color:#3344dd;
     }
     button.blue_button:hover {
-        background-color:#3e45e7;
+        background-color:#3e55e7;
     }
     button.grey_button{
         border:1px solid #444444;
         background-color:#666666;
     }
     button.grey_button:hover {
-        background-color:#888888;
+        background-color:#777777;
     }
     select{
         height: 24px;
@@ -158,44 +158,49 @@
     }
 </style>
 <div id="timeline_container" ng-controller="TimelineController" ng-init="Init()">
-    <div id="timeline_chart_container">
-        <div id="timeline_date">
-            <span ng-click="prevDay()"> < </span>
-            <input ng-change="UpdateTimeline()" ng-model="ui_i_date" type="date" />
-            <span ng-click="nextDay()"> > </span>
+    <div ng-show="!user">
+        Please login first
+    </div>
+    <div ng-show="user">
+        <div id="timeline_chart_container">
+            <div id="timeline_date">
+                <span ng-click="prevDay()"> < </span>
+                <input ng-change="UpdateTimeline()" ng-model="ui_i_date" type="date" />
+                <span ng-click="nextDay()"> > </span>
+            </div>
+
+            <div id="timeline_chart_user"></div>
         </div>
 
-        <div id="timeline_chart_user"></div>
-    </div>
-
-    <div id="edits_container">
-        <div id="edits_add_container">
-            <hr />
+        <div id="edits_container">
+            <div id="edits_add_container">
+                <hr />
             <span>
                 <label>Start: </label>
                 <select ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
-                         ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
+                        ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
             </span>
             <span>
                 <label>End: </label>
                 <select ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
                                                 timeOptions.indexOf(ui_i_end) - 1 : timeOptions.indexOf(ui_i_start)]"
-                         ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
+                        ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
             </span>
 
-            <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
-            <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
-            <button class="blue_button" ng-click="CommitAddingTime()">Add</button>
+                <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
+                <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
+                <button class="blue_button" ng-click="CommitAddingTime()">Add Free</button>
 
+            </div>
+            <div id="edits_tool_container">
+                <!--<button ng-show="user.login_privileged">Remove Meeting</button>-->
+                <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
+            </div>
         </div>
-        <div id="edits_tool_container">
-            <!--<button ng-show="user.login_privileged">Remove Meeting</button>-->
-            <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
-        </div>
-    </div>
 
-    <div id="message_container_bot">
-    </div>
-    <div id="message_container_top">
+        <div id="message_container_bot">
+        </div>
+        <div id="message_container_top">
+        </div>
     </div>
 </div>
