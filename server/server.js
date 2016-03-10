@@ -182,16 +182,20 @@ app.get('/usernameExist/:user',function(req,res){
 });
 
 app.get('/createUser/:user/:display/:pass/:role',function(req,res){
-	connection.query("INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`) VALUES ('" + req.params.user + "', '" + req.params.display + "', '" + req.params.role + "', '" + req.params.pass + "');",function(err,rows){
-			if(err)
-			{
-				console.log("Problem with MySQL"+err);
-			}
-			else
-			{
-				res.end(JSON.stringify({success: true}));
-			}
-		});
+	connection.query("SELECT * FROM Login WHERE login_username = '" + req.params.user + "';",function(err,rows) {
+		if(rows.length == 0) {
+			connection.query("INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`) VALUES ('" + req.params.user + "', '" + req.params.display + "', '" + req.params.role + "', '" + req.params.pass + "');", function (err, rows) {
+				if (err) {
+					console.log("Problem with MySQL" + err);
+				}
+				else {
+					res.end(JSON.stringify({success: true}));
+				}
+			});
+		}else{
+			res.end(JSON.stringify({success: false}));
+		}
+	});
 });
 app.get('/removeUser/:id',function(req,res){
 	connection.query("DELETE FROM Login WHERE login_id = '" + req.params.id + "';",function(err,rows){
