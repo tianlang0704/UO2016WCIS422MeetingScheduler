@@ -278,7 +278,7 @@
                         <div class="user_add_label">Display Name </div>
                         <input class="user_add_input" name="displayname" placeholder="Display Name" type="text"
                                ng-pattern="pattdDisplayname" ng-model="ui_i_displayname" required/>
-                        <div ng-show="user_add_form.password.$error.pattern && !user_add_form.displayname.$error.required" class="user_add_errormsg_box">
+                        <div ng-show="user_add_form.displayname.$error.pattern && !user_add_form.displayname.$error.required" class="user_add_errormsg_box">
                             <p>Display name needs to be: </p>
                             <ul>
                                 <li>1-30 charcters of alphabet or number</li>
