@@ -105,6 +105,20 @@
         -webkit-border-radius: 4px;
         box-shadow: inset 0 1px 3px #dddddd;
     }
+    .user_add_errormsg_box{
+        position:fixed;
+        right: 20px;
+        bottom: 20px;
+        padding: 0 10px;
+        background-color: #2aabd2;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 3px 20px 0 rgba(0, 0, 0, 0.15);
+        border: 1px solid #2b669a;
+        border-radius: 2px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        font-family: "Calibri Light", Arial;
+        pointer-events: none;
+    }
     #user_add_button{
         margin-top: 10px;
         margin-left: 220px;
@@ -226,19 +240,52 @@
                 <form name="user_add_form">
                     <div class="user_add_field">
                         <div class="user_add_label">Username </div>
-                        <input class="user_add_input" name="username" placeholder="Username" ng-model="ui_i_username" required/>
+                        <input class="user_add_input" name="username" placeholder="Username" typ="text"
+                               ng-pattern="pattUsername" ng-model="ui_i_username" ng-model-options="{ debounce: 500 }" required username-validator/>
+                        <div class="user_add_errormsg_box" ng-show="user_add_form.username.$error.usernameAvailable &&
+                                                                !user_add_form.username.$pending.usernameExist &&
+                                                                !user_add_form.username.$error.required">
+                            <p>Username is duplicated</p>
+                        </div>
+                        <div class="user_add_errormsg_box" ng-show="user_add_form.username.$error.pattern && !user_add_form.username.$error.required">
+                            <p>Username needs to be: </p>
+                            <ul>
+                                <li>1-18 charcters of alphabet or number</li>
+                                <li>dash(-) or underscore(_)</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="user_add_field">
                         <div class="user_add_label">Password </div>
-                        <input class="user_add_input" name="password" placeholder="Password" type="password"  ng-model="ui_i_password" required/>
+                        <input class="user_add_input" name="password" placeholder="Password" type="password" type="text"
+                               ng-pattern="pattPassword" ng-model="ui_i_password" required/>
+                        <div ng-show="user_add_form.password.$error.pattern && !user_add_form.password.$error.required" class="user_add_errormsg_box">
+                            <p>Password needs to be: </p>
+                            <ul>
+                                <li>1-15 charcters of alphabet or number</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="user_add_field">
                         <div class="user_add_label">Retype Password </div>
-                        <input class="user_add_input" name="re_password" placeholder="Password" type="password" ng-model="ui_i_repassword" required/>
+                        <input class="user_add_input" name="repassword" placeholder="Password" type="password"
+                               ng-model="ui_i_repassword" required/>
+                        <div ng-show="ui_i_password != ui_i_repassword && !user_add_form.repassword.$error.required" class="user_add_errormsg_box">
+                            Passwords do not match
+                        </div>
                     </div>
                     <div class="user_add_field">
                         <div class="user_add_label">Display Name </div>
-                        <input class="user_add_input" name="display_name" placeholder="Display Name" ng-model="ui_i_dname" required/>
+                        <input class="user_add_input" name="displayname" placeholder="Display Name" type="text"
+                               ng-pattern="pattdDisplayname" ng-model="ui_i_displayname" required/>
+                        <div ng-show="user_add_form.password.$error.pattern && !user_add_form.displayname.$error.required" class="user_add_errormsg_box">
+                            <p>Display name needs to be: </p>
+                            <ul>
+                                <li>1-30 charcters of alphabet or number</li>
+                                <li>dash(-) or underscore(_)</li>
+                                <li>Space</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="user_add_field">
                         <div class="user_add_label">Role</div>

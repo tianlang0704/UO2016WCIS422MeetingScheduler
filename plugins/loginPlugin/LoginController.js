@@ -4,6 +4,11 @@
 
 myApp.controller("LoginController", function($scope, $state, $cookieStore, BackendDataService)
 {
+    $scope.Init = function()
+    {
+        $scope.pattUsername = "[\\w\\-_]{1,18}";
+        $scope.pattPassword = "\\w{1,15}";
+    }
 
     $scope.ShowMessage = function(msg, isTop)
     {
@@ -19,11 +24,9 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
 
     $scope.Login = function()
     {
-        if($scope.login_form.login_username.$error.required ||
-           $scope.login_form.login_password.$error.required)
-        {
+        //input check
+        if($scope.login_form.$invalid)
             return false;
-        }
 
         BackendDataService.CheckLogin($scope.ui_i_username, $scope.ui_i_password).then(function(data)
         {

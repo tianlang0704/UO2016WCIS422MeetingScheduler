@@ -22,6 +22,20 @@
         box-shadow: inset 0 1px 3px #dddddd;
         margin-top:10px;
     }
+    .login_errormsg_box{
+        position:fixed;
+        right: 20px;
+        bottom: 20px;
+        padding: 0 10px;
+        background-color: #2aabd2;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 3px 20px 0 rgba(0, 0, 0, 0.15);
+        border: 1px solid #2b669a;
+        border-radius: 2px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        font-family: "Calibri Light", Arial;
+        pointer-events: none;
+    }
     #login_button_container{
         margin-top:10px;
     }
@@ -103,12 +117,26 @@
     <div id="login_card" class="card" >
         <form name="login_form">
             <div>
-                <input class="login_input" name="login_username" ng-model="ui_i_username" placeholder="Username" required/>
-                <input class="login_input" name="login_password" ng-model="ui_i_password" type="password" placeholder="Password" required/>
+                <input class="login_input" name="login_username" placeholder="Username"
+                       ng-model="ui_i_username" ng-pattern="pattUsername" required/>
+                <input class="login_input" name="login_password" type="password" placeholder="Password"
+                       ng-model="ui_i_password" ng-pattern="pattPassword" required/>
+                <div ng-show="login_form.login_username.$error.pattern && !login_form.login_username.$error.required" class="login_errormsg_box">
+                    <p>Password needs to be: </p>
+                    <ul>
+                        <li>1-15 charcters of alphabet or number</li>
+                    </ul>
+                </div>
+                <div ng-show="login_form.login_password.$error.pattern && !login_form.login_password.$error.required" class="login_errormsg_box">
+                    <p>Password needs to be: </p>
+                    <ul>
+                        <li>1-15 charcters of alphabet or number</li>
+                    </ul>
+                </div>
             </div>
             <div id="login_button_container">
                 <button id="login_login" ng-click="Login()">Login</button>
-                <button id="login_reset" ng-click="ui_i_username = ''; ui_i_password = '';">Reset</button>
+                <button id="login_reset" ng-click="ui_i_username = ''; ui_i_password = '';">Clear</button>
             </div>
         </form>
     </div>

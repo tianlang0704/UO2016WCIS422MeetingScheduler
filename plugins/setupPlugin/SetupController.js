@@ -1,6 +1,24 @@
 /**
  * Created by tianl on 2/28/2016.
  */
+myApp.directive("usernameValidator", function($http, $q){
+    return {
+        require: "ngModel",
+        controller: ["$scope", "BackendDataService", function($scope, BackendDataService){
+            $scope.UsernameExist = BackendDataService.UsernameExist;}],
+        link: function($scope, element, attrs, ngModel) {
+            ngModel.$asyncValidators.usernameAvailable = function(modelValue, viewValue){
+                return $scope.UsernameExist(viewValue).then(function(response){
+                    if(response == false) {
+                        return true;
+                    } else {
+                        return $q.reject("Username does not exist");
+                    }
+                });
+            }
+        }
+    }
+});
 
 myApp.controller("SetupController", function($scope, $state, $cookieStore, BackendDataService)
 {
@@ -11,9 +29,14 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
         if(!$scope.user || !$scope.user.login_privileged)
             return;
 
+        //Init matching pattern
+        $scope.pattUsername = "[\\w\\-_]{1,18}";
+        $scope.pattPassword = "\\w{1,15}";
+        $scope.pattdDisplayname = "[\\w\\-\\s_]{1,30}";
+
         //Update table for the fist time
         $scope.UpdateUserTable();
-    }
+    };
 
     $scope.ShowMessage = function(msg, isTop)
     {
@@ -25,13 +48,13 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
         else
             $("#message_container_bot").append(msgLabel);
         msgLabel.fadeIn(500).fadeOut(5000);
-    }
+    };
 
     $scope.UpdateUserTable = function()
     {
         $scope.ShowMessage("Loading users", true);
         BackendDataService.GetAllUsers().then(function(data) {$scope.users = data;});
-    }
+    };
 
     $scope.CommitUserDeletion = function()
     {
@@ -44,9 +67,9 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
 
         //confirm and do user deletion
         if(confirm("Are you sure that you want to delete user: " + $scope.ui_i_del_sel.login_username +
-            "\nWith display name: " + $scope.ui_i_del_sel.login_displayname))
+            "\nDisplay name: " + $scope.ui_i_del_sel.login_displayname))
         {
-            BackendDataService.RemoveUser($scope.ui_i_del_sel.login_username).then(function(data)
+            BackendDataService.RemoveUser($scope.ui_i_del_sel.login_id).then(function(data)
             {
                 if(data)
                     $scope.ShowMessage("User deletion succeeded");
@@ -55,18 +78,15 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
                 $scope.UpdateUserTable();
             });
         }
-    }
+    };
 
     $scope.CommitUserCreation = function()
     {
         //check input fields
-        if($scope.user_add_form.username.$error.required ||
-           $scope.user_add_form.display_name.$error.required ||
-            $scope.user_add_form.password.$error.required ||
-            $scope.user_add_form.re_password.$error.required ||
+        if($scope.user_add_form.$invalid ||
             $scope.user_add_form.role.$error.required)
         {
-            $scope.ShowMessage("Please complete the information form!");
+            $scope.ShowMessage("Form incomplete or error exists, please check note.");
             return false;
         }
 
@@ -78,8 +98,9 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
         }
 
         //do user creation
+        var displayname = $scope.ui_i_displayname == "" ? $scope.ui_i_username : $scope.ui_i_displayname;
         BackendDataService.
-            AddUser($scope.ui_i_username, $scope.ui_i_dname, $scope.ui_i_password, $scope.ui_i_role).
+            AddUser($scope.ui_i_username, displayname, $scope.ui_i_password, $scope.ui_i_role).
             then(function(data)
             {
                 var msg;
@@ -89,10 +110,10 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
                     $scope.ShowMessage("User creation failed");
                 $scope.UpdateUserTable();
             });
-    }
+    };
 
     $scope.Timeline = function()
     {
         $state.go("Timeline");
-    }
+    };
 });

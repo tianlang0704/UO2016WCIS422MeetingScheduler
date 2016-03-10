@@ -153,10 +153,21 @@ myApp.service('BackendDataService', function($http) {
     };
 
 //    Implemented, need to test
-    this.RemoveUser = function(Username){
-        return $http.get(db_server + '/removeUser/' + Username).then(function(data){
+    this.RemoveUser = function(id){
+        return $http.get(db_server + '/removeUser/' + id).then(function(data){
             //indicate success or failure
             return data.data.success;
+        });
+    };
+
+    //return true if username exist, false if not, -1 if error
+    this.UsernameExist = function(username){
+        return $http.get(db_server + '/usernameExist/' + username).then(function(data){
+            //indicate success or failure
+            if(data.data.success)
+                return data.data.isExist;
+            else
+                return -1;
         });
     };
 
