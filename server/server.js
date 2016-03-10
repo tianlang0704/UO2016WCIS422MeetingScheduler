@@ -141,30 +141,63 @@ app.get('/getAllTimesBetweenDates/:start/:end/:user',function(req,res){
 });
 
 app.get('/createTimeForUser/:start/:end/:user/:type/:target',function(req,res){
-	if(req.params.type == "Meeting")
-	{
-		connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`, `free_target_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "', '" + req.params.target + "');",function(err,rows){
-			if(err)
-			{
-				console.log("Problem with MySQL"+err);
+	connection.query("SELECT * FROM FreeTime WHERE free_start <= '" + req.params.start + "' AND free_end >= '" + req.params.end + "' AND login_id = '" + req.params.user + "';", function(err, rows){
+		if(rows.length == 1){
+			if(req.params.type == "Meeting" && rows[0].free_label == "Meeting"){
+				//error. Cant schedule meeting over meeting
 			}
-			else
-			{
-				res.end(JSON.stringify(rows));
+			if(req.params.type == "Free" && rows[0].free_label == "Free"){
+				//error, attempting to put free time inside free time
 			}
-		});
-	} else {
-		connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "');",function(err,rows){
-			if(err)
-			{
-				console.log("Problem with MySQL"+err);
+			if(req.params.type == "Free" && rows[0].free_label == "Meeting"){
+				//error cant put free time into meeting slot
 			}
-			else
-			{
-				res.end(JSON.stringify(rows));
+			if(req.params.type == "Meeting" && rows[0].free_label == "Free"){
+				//success! Let's check the cases.
+				//need to add splitting
+				//case start times same
+				//case end times same
+				//case start and end same
+				//case start > existing free start and end < existing free end
+				if(req.params.start == rows[0].start && req.params.end == rows[0].end){
+					//same start, same end. delete and add new entry
+				}else if(req.params.start == rows[0].start && req.params.end < rows[0].end){
+					//split, make meeting at start of free time, add new free time from end of meeting to existing end
+				}else if(req.params.start > rows[0].start && req.params.end == rows[0].end){
+					//split, make free time start at existing free time, meeting to end at end time
+				}else if(req.params.start > rows[0].start && req.params.end < rows[0].end){
+					//make free time before and after meeting
+				}
 			}
-		});
-	}
+		}else{
+			//no existing time. Let's put it in.
+			if(req.params.type == "Meeting")
+			{
+				connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`, `free_target_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "', '" + req.params.target + "');",function(err,rows){
+					if(err)
+					{
+						console.log("Problem with MySQL"+err);
+					}
+					else
+					{
+						res.end(JSON.stringify(rows));
+					}
+				});
+			} else {
+				//check to see if there is an existing free time where end==new.start or start == new.end
+				connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "');",function(err,rows){
+					if(err)
+					{
+						console.log("Problem with MySQL"+err);
+					}
+					else
+					{
+						res.end(JSON.stringify(rows));
+					}
+				});
+			}
+		}
+	});
 
 });
 
