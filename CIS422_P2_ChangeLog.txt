@@ -1,0 +1,26 @@
+Todo:
+Timeline function fix
+
+2016-03-10
+Add: BackendDataService user check function
+Bugfix: Login page input check
+Bugfix: Setup page unable to delete user
+Bugfix: Setup page input check
+Bugfix: Setup page username duplication check
+Bugfix: Remove user by name changed to by ID
+Bugfix: Login page change Reset to Clear for empty input box button
+
+
+2016-03-09
+Add: Showing meeting target tracking
+Add: Showing professor timeline in student view
+
+2016-03-08
+Add: Professor timeline completed
+Add: Title bar comepleted
+Bugfix: Logo click stays in login page before login
+Bugfix: http uncaught error fix
+Bugfix: default timeline added
+
+2016-03-07
+Bugfix: Removing dbug popup message
