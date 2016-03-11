@@ -9,7 +9,10 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         //Check login
         $scope.user = $cookieStore.get("user");
         if(!$scope.user)
+        {
             $state.go('Login');
+            return;
+        }
 
         //Init chart
         var container = document.getElementById('timeline_chart_user');

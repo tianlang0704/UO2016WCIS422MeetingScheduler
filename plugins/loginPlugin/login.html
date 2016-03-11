@@ -122,9 +122,10 @@
                 <input class="login_input" name="login_password" type="password" placeholder="Password"
                        ng-model="ui_i_password" ng-pattern="pattPassword" required/>
                 <div ng-show="login_form.login_username.$error.pattern && !login_form.login_username.$error.required" class="login_errormsg_box">
-                    <p>Password needs to be: </p>
+                    <p>Username needs to be: </p>
                     <ul>
-                        <li>1-15 charcters of alphabet or number</li>
+                        <li>1-18 charcters of alphabet or number</li>
+                        <li>dash(-) or underscore(_)</li>
                     </ul>
                 </div>
                 <div ng-show="login_form.login_password.$error.pattern && !login_form.login_password.$error.required" class="login_errormsg_box">

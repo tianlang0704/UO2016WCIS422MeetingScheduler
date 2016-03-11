@@ -1,12 +1,14 @@
 /**
  * Created by tracehagan on 2/7/16.
  */
-myApp.controller("MainController", function($scope, $state, $cookieStore, BackendDataService){
+myApp.controller("MainController", function($scope, $state, $cookieStore){
     $scope.state = $state;
-    $scope.$watch(function(){return $cookieStore.get("user") == undefined ? false : $cookieStore.get("user").login_privileged;},
-        function(data){
-            $scope.login_privileged = data;
-        });
+
+    $scope.$watch(function(){return $cookieStore.get("user");},
+        function(newValue, oldValue){if(newValue) $scope.user = newValue; else $scope.user = {no_login: true};},
+        true);
+
+    $scope.$state = $state;
 
     $scope.examplePlugin = function (){
         $state.go('Example');

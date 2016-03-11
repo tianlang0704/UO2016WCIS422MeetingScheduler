@@ -6,6 +6,7 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
 {
     $scope.Init = function()
     {
+        $cookieStore.remove("user");
         $scope.pattUsername = "[\\w\\-_]{1,18}";
         $scope.pattPassword = "\\w{1,15}";
     }
@@ -41,7 +42,7 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
                 return false;
             }
 
-            $cookieStore.remove("user");
+            //$cookieStore.remove("user");
             data.login_privileged = data.login_role == 10 ? true : false;
             $cookieStore.put("user", data);
 
