@@ -10,7 +10,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         $scope.user = $cookieStore.get("user");
         if(!$scope.user)
         {
-            $state.go('Login');
+            setTimeout(function(){$state.go('Login');}, 2500);
             return;
         }
 
@@ -50,10 +50,11 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
 
         //Initialize necessary ui models
         $scope.ui_i_date = new Date();
+        $scope.ui_i_days = 1;
         $scope.timelineModel = {};
 
         //Update time line for the first time
-        $scope.UpdateTimeline();
+        $scope.UpdateTimeline($scope.ui_i_days);
 
         //Init user list if is privileged user
         if($scope.user.login_privileged)
@@ -99,17 +100,17 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
     };
 
     //Click handler for date bar button
-    $scope.prevDay = function()
+    $scope.prevNDay = function(n)
     {
-        $scope.ui_i_date = new Date($scope.ui_i_date.getTime() - 24 * 3600 * 1000);
-        $scope.UpdateTimeline();
+        $scope.ui_i_date = new Date($scope.ui_i_date.getTime() - n * 24 * 3600 * 1000);
+        $scope.UpdateTimeline($scope.ui_i_days);
     };
 
     //Click handler for date bar button
-    $scope.nextDay = function()
+    $scope.nextNDay = function(n)
     {
-        $scope.ui_i_date = new Date($scope.ui_i_date.getTime() + 24 * 3600 * 1000);
-        $scope.UpdateTimeline();
+        $scope.ui_i_date = new Date($scope.ui_i_date.getTime() + n * 24 * 3600 * 1000);
+        $scope.UpdateTimeline($scope.ui_i_days);
     };
 
     //Show time line with data and options
@@ -117,8 +118,8 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
     {
         var dataTable = {};
         dataTable = new google.visualization.DataTable();
-        dataTable.addColumn({ type: 'string', id: 'Room' });
-        dataTable.addColumn({ type: 'string', id: 'Name' });
+        dataTable.addColumn({ type: 'string', id: 'User' });
+        dataTable.addColumn({ type: 'string', id: 'Label' });
         dataTable.addColumn({ type: 'date', id: 'Start' });
         dataTable.addColumn({ type: 'date', id: 'End' });
         var tempData = [];
@@ -126,7 +127,8 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         dataTable.addRows(tempData);
 
         var options = {
-            timeline: { colorByRowLabel: true }
+            timeline: { colorByRowLabel: true },
+            height: dataTable.getDistinctValues(0).length * 42 + 50
         };
         for (var attrname in newOpt) { options[attrname] = newOpt[attrname]; }
         $scope.ui_o_chart.draw(dataTable, options);
@@ -136,7 +138,8 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
             var el=container.getElementsByTagName("rect");      //get all the descendant rect element inside the container
             var width=3;                                //set a large initial value to width
             var elToRem=[];                                     //element would be added to this array for removal
-            for(var i=0;i<el.length;i++){                           //looping over all the rect element of container
+            for(var i=0;i<el.length;i++)
+            {                           //looping over all the rect element of container
                 var cwidth=parseInt(el[i].getAttribute("width"));//getting the width of ith element
                 if(cwidth<width){                               //if current element width is less than previous width then this is min. width and ith element should be removed
                     elToRem=[el[i]];
@@ -154,7 +157,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
     //Update timeline model with date bar input and use ShowTimeline to refresh it on the page.
     //Input: optional, int, starting hour in a day
     //       optional, int, ending hour in a day
-    $scope.UpdateTimeline = function(param_start, param_end)
+    $scope.UpdateTimeline = function(param_days, param_start, param_end)
     {
         //login check
         if($scope.user == undefined)
@@ -164,11 +167,14 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         }
 
         //Checking params
+        param_days = param_days == undefined ? 1 : param_days;
         param_start = param_start == undefined ? 6 : param_start;
-        param_end = param_end == undefined ? 19 : param_end;
-        $scope.timeOptions = OptionGenerator(param_start, param_end);
+        param_end = param_end == undefined ? 24 * (param_days - 1) + 19 : 24 * (param_days - 1) + param_end;
 
-        //Converting to todays date + time
+        $scope.timeOptions = OptionGenerator(param_start, param_end);
+        $scope.ui_i_target = undefined;
+
+        //Converting to today's date + time
         var start = new Date($scope.ui_i_date.getTime());
         start.setHours(param_start,0,0,0);
         var end = new Date($scope.ui_i_date.getTime());
@@ -177,14 +183,13 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         //Get data from server and then update timeline
         $scope.ShowMessage("Updating timeline");
         BackendDataService.GetAllTimesBetweenDatesForUser(start, end, $scope.user.login_id).
-        then(function(data)
-        {
+        then(function(data) {
             var currentUserSchedule = [[ $scope.user.login_displayname, "", start, start, undefined]];
             currentUserSchedule = currentUserSchedule.concat(data);
 
             BackendDataService.GetAllTimesBetweenDatesForRole(start, end, $scope.user.login_role == 10 ? 20 : 10).
             then(function(data2){
-                $scope.timelineModel.opt = {hAxis: {format: 'HH:mm', minValue: start, maxValue: end}};
+                $scope.timelineModel.opt = {hAxis: {format: 'MMMM dd HH:mm', minValue: start, maxValue: end}};
                 $scope.timelineModel.data = currentUserSchedule.concat(data2);
                 $scope.ShowTimeline( $scope.timelineModel.data, $scope.timelineModel.opt);
             });
@@ -219,18 +224,21 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         var end = new Date($scope.ui_i_date.getTime());
         end.setHours(0,$scope.ui_i_end.offsetInMins,0,0);
 
-        var AddTimeNotify = function(result)
+        var AddTimeResultNotify = function(result)
         {
             if(result)
+            {
+                $scope.ClearInput();
                 $scope.ShowMessage("Succeeded adding time", true);
-            else
+            } else {
                 $scope.ShowMessage("Failed adding time", true);
-            $scope.UpdateTimeline();
+            }
+            $scope.UpdateTimeline($scope.ui_i_days);
         }
         if(isMeeting)
-            BackendDataService.AddMeetingForUser(start, end, $scope.user.login_id, $scope.ui_i_target.login_id).then(function(data){AddTimeNotify(data);});
+            BackendDataService.AddMeetingForUser(start, end, $scope.user.login_id, $scope.ui_i_target.login_id).then(function(data){AddTimeResultNotify(data);});
         else
-            BackendDataService.AddFreeTimeForUser(start, end, $scope.user.login_id).then(function(data){AddTimeNotify(data);});
+            BackendDataService.AddFreeTimeForUser(start, end, $scope.user.login_id).then(function(data){AddTimeResultNotify(data);});
     };
 
     //Click handler for Add
@@ -256,16 +264,35 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         end.setHours(0,$scope.ui_i_end.offsetInMins,0,0);
 
         BackendDataService.RemoveFreeTimeForUser(start, end, $scope.user.login_id).then(function(data){
-            if(data)
+            if(data) {
+                $scope.ClearInput();
                 $scope.ShowMessage("Succeeded removing free time", true);
-            else
+            } else {
                 $scope.ShowMessage("Failed removing free time", true);
-            $scope.UpdateTimeline();
+            }
+            $scope.UpdateTimeline($scope.ui_i_days);
         })
     };
 
+    $scope.ViewMode = function()
+    {
+        $scope.inputDisabled = !$scope.inputDisabled;
+        if($scope.inputDisabled)
+            $scope.ui_i_days = 5;
+        else
+            $scope.ui_i_days = 1;
+        $scope.UpdateTimeline($scope.ui_i_days);
+    };
+
+    $scope.ClearInput = function()
+    {
+        $scope.ui_i_start = undefined;
+        $scope.ui_i_end = undefined;
+        $scope.ui_i_target = undefined;
+    };
+
     //Click handler for Setup
-    $scope.Setup = function()
+    $scope.GotoSetup = function()
     {
         $state.go("Setup");
     };

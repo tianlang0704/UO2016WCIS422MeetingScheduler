@@ -26,13 +26,14 @@ CREATE TABLE IF NOT EXISTS `mydb`.`FreeTime` (
   `free_start` INT NOT NULL,
   `free_end` INT NOT NULL,
   `free_label` VARCHAR(45) NOT NULL,
+  `free_target_id` INT,
   `login_id` INT NOT NULL,
   PRIMARY KEY (`free_id`, `login_id`),
   INDEX `fk_FreeTime_Login_idx` (`login_id` ASC),
   CONSTRAINT `fk_FreeTime_Login`
     FOREIGN KEY (`login_id`)
     REFERENCES `mydb`.`Login` (`login_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 

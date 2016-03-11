@@ -1,24 +1,6 @@
 /**
  * Created by tianl on 2/28/2016.
  */
-myApp.directive("usernameValidator", function($http, $q){
-    return {
-        require: "ngModel",
-        controller: ["$scope", "BackendDataService", function($scope, BackendDataService){
-            $scope.UsernameExist = BackendDataService.UsernameExist;}],
-        link: function($scope, element, attrs, ngModel) {
-            ngModel.$asyncValidators.usernameAvailable = function(modelValue, viewValue){
-                return $scope.UsernameExist(viewValue).then(function(response){
-                    if(response == false) {
-                        return true;
-                    } else {
-                        return $q.reject("Username does not exist");
-                    }
-                });
-            }
-        }
-    }
-});
 
 myApp.controller("SetupController", function($scope, $state, $cookieStore, BackendDataService)
 {
@@ -27,7 +9,10 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
         //Check login
         $scope.user = $cookieStore.get("user");
         if(!$scope.user || !$scope.user.login_privileged)
+        {
+            setTimeout(function(){$state.go('Login');}, 2500);
             return;
+        }
 
         //Init matching pattern
         $scope.pattUsername = "[\\w\\-_]{1,18}";
@@ -64,17 +49,25 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
             $scope.ShowMessage("Please select an user to delete");
             return false;
         }
+        //role check
+        if($scope.ui_i_del_sel.login_role == 10)
+        {
+            $scope.ShowMessage("You cannot delete a professor at this moment");
+            return false;
+        }
 
         //confirm and do user deletion
         if(confirm("Are you sure that you want to delete user: " + $scope.ui_i_del_sel.login_username +
             "\nDisplay name: " + $scope.ui_i_del_sel.login_displayname))
         {
-            BackendDataService.RemoveUser($scope.ui_i_del_sel.login_id).then(function(data)
-            {
+            BackendDataService.RemoveUser($scope.ui_i_del_sel.login_id).then(function(data) {
                 if(data)
+                {
                     $scope.ShowMessage("User deletion succeeded");
-                else
+                    $scope.ui_i_del_sel = undefined;
+                }else{
                     $scope.ShowMessage("User deletion failed");
+                }
                 $scope.UpdateUserTable();
             });
         }
@@ -101,19 +94,49 @@ myApp.controller("SetupController", function($scope, $state, $cookieStore, Backe
         var displayname = $scope.ui_i_displayname == "" ? $scope.ui_i_username : $scope.ui_i_displayname;
         BackendDataService.
             AddUser($scope.ui_i_username, displayname, $scope.ui_i_password, $scope.ui_i_role).
-            then(function(data)
-            {
+            then(function(data) {
                 var msg;
-                if(data)
+                if(data) {
+                    $scope.ClearFormInput();
                     $scope.ShowMessage("User creation succeeded");
-                else
+                }else {
                     $scope.ShowMessage("User creation failed");
+                }
                 $scope.UpdateUserTable();
             });
     };
 
-    $scope.Timeline = function()
+    $scope.ClearFormInput = function()
+    {
+        $scope.ui_i_username = undefined;
+        $scope.ui_i_password = undefined;
+        $scope.ui_i_repassword = undefined;
+        $scope.ui_i_displayname = undefined;
+        $scope.ui_i_role = undefined;
+    };
+
+    //Click handler
+    $scope.GotoTimeline = function()
     {
         $state.go("Timeline");
     };
+});
+
+myApp.directive("usernameValidator", function($http, $q){
+    return {
+        require: "ngModel",
+        controller: ["$scope", "BackendDataService", function($scope, BackendDataService){
+            $scope.UsernameExist = BackendDataService.UsernameExist;}],
+        link: function($scope, element, attrs, ngModel) {
+            ngModel.$asyncValidators.usernameAvailable = function(modelValue, viewValue){
+                return $scope.UsernameExist(viewValue).then(function(response){
+                    if(response == false) {
+                        return true;
+                    } else {
+                        return $q.reject("Username does not exist");
+                    }
+                });
+            }
+        }
+    }
 });

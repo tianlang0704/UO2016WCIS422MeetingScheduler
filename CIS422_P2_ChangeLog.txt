@@ -1,5 +1,12 @@
-Todo:
-Timeline function fix
+
+2016-03-11
+Add: 5 day mode (view only)
+Bugfix: All page title bar dynamic display
+Bugfix: Login page username format text
+Bugfix: Setup page clear selection after user deletion
+Bugfix: All input box clear slection after commit
+Bugfix: All pages show message and redirection on url input without login
+
 
 2016-03-10
 Add: BackendDataService user check function

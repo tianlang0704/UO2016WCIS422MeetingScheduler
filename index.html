@@ -63,7 +63,7 @@
     <ul>
       <li class="navbar-logo"><div ng-click="timelinePlugin()">Duck Meet</div></li>
       <li class="navbar-options" ng-cloak ng-show="user.login_privileged && !$state.is('Setup')"><div ng-click="setupPlugin()">Setup</div></li>
-      <li class="navbar-options" ng-cloak ng-show="!$state.is('Login') && !$state.current.name == ''"><div ng-click="loginPlugin()">Logout</div></li>
+      <li class="navbar-options" ng-cloak ng-show="!$state.is('Login') && !$state.current.name == '' && !user.no_login == true"><div ng-click="loginPlugin()">Logout</div></li>
     </ul>
   </div>
   <div ui-view="appView"></div>

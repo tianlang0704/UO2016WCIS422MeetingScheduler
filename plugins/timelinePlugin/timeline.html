@@ -1,4 +1,7 @@
 <style>
+    #timeline_container{
+        min-width: 810px;
+    }
     #timeline_chart_container{
         text-align: center;
         z-index:500;
@@ -25,14 +28,22 @@
     }
     #timeline_date{
         height: 30px;
+        padding-left: 142px;
     }
     #timeline_date span{
         cursor: pointer;
         font-weight:bold;
         font-family: Arial, Calibri;
         font-size: 16px;
-        margin: 5px;
+        margin: 10px;
         user-select: none;
+    }
+    #timeline_mode_button{
+        float:right;
+        -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+        -moz-user-select: none; /* mozilla browsers */
+        -khtml-user-select: none; /* webkit (konqueror) browsers */
+        -ms-user-select: none;
     }
     #edits_container{
         position: relative;
@@ -95,32 +106,36 @@
         text-decoration:none;
         text-shadow:0px 1px 0px #2f6627;
     }
-    button:hover {
+    button:hover:enabled {
         background-color:#5ccf2a;
     }
     button:active {
         position:relative;
         top:1px;
     }
+    button:disabled {
+        color: #DDDDDD;
+
+    }
     button.red_button{
         border:1px solid #843534;
         background-color:#b92c28;
     }
-    button.red_button:hover {
+    button.red_button:hover:enabled {
         background-color:#c7355e;
     }
     button.blue_button{
         border:1px solid #343584;
         background-color:#3344dd;
     }
-    button.blue_button:hover {
+    button.blue_button:hover:enabled {
         background-color:#3e55e7;
     }
     button.grey_button{
         border:1px solid #444444;
         background-color:#666666;
     }
-    button.grey_button:hover {
+    button.grey_button:hover:enabled {
         background-color:#777777;
     }
     #message_container_bot{
@@ -158,17 +173,47 @@
         display: block;
         pointer-events: none;
     }
+    .timeline_page_error{
+        padding: 10px 20px;
+        width: 600px;
+        margin: auto;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.10);
+    }
+/*toggle button*/
+    input.chk-btn {
+        display: none;
+    }
+    input.chk-btn:not(:checked) + button:hover {
+        background-color: #5bc0de;
+    }
+    input.chk-btn + button:active,
+    input.chk-btn:checked + button {
+        position: relative;
+        top: 1px;
+        background-color: #2e6da4;
+        border: solid 1px #0f0f0f;
+    }
 </style>
 <div id="timeline_container" ng-controller="TimelineController" ng-init="Init()">
-    <div ng-show="!user">
-        Please login first
+    <div class="timeline_page_error" ng-show="!user">
+        Please login first, jumping in 2 seconds.
     </div>
     <div ng-show="user" id="timeline_wrapper_container">
         <div id="timeline_chart_container">
             <div id="timeline_date">
-                <span ng-click="prevDay()"> < </span>
+                <span ng-click="prevNDay(5)"> <<5 Days </span>
+                <span ng-click="prevNDay(1)"> < </span>
                 <input ng-change="UpdateTimeline()" ng-model="ui_i_date" type="date" />
-                <span ng-click="nextDay()"> > </span>
+                <span ng-click="nextNDay(1)"> > </span>
+                <span ng-click="nextNDay(5)"> 5 Days>> </span>
+                <a id="timeline_mode_button">
+                    <input class="chk-btn" ng-checked="inputDisabled" type="checkbox" />
+                    <button ng-click="ViewMode()">5 Day Mode(View Only)</button>
+                </a>
+
             </div>
 
             <div id="timeline_chart_user"></div>
@@ -180,25 +225,25 @@
                 <div>
                     <span>
                     <label>Start: </label>
-                    <select ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
+                    <select ng-disabled="inputDisabled" ng-change="ui_i_end = timeOptions[timeOptions.indexOf(ui_i_start) + 1]"
                             ng-model="ui_i_start" ng-options="opt.label for opt in timeOptions"></select>
                     </span>
                     <span>
                         <label>End: </label>
-                        <select ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
+                        <select ng-disabled="inputDisabled" ng-change="ui_i_start = timeOptions[timeOptions.indexOf(ui_i_start) > timeOptions.indexOf(ui_i_end) ?
                                                         timeOptions.indexOf(ui_i_end) - 1 : timeOptions.indexOf(ui_i_start)]"
                                 ng-model="ui_i_end" ng-options="opt.label for opt in timeOptions"></select>
                     </span>
                     <span ng-show="user.login_privileged">
                         <label>With: </label>
-                        <select ng-model="ui_i_target" ng-options="user as user.login_displayname for user in users"></select>
+                        <select ng-disabled="inputDisabled" ng-model="ui_i_target" ng-options="user as user.login_displayname for user in users"></select>
                     </span>
                 </div>
                 <div id="edits_button_container">
-                    <button class="blue_button" ng-click="CommitAddingTime()">Add Free</button>
-                    <button ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
-                    <button class="red_button" ng-click="CommitRemovingFreeTime()">Remove</button>
-                    <button ng-show="user.login_privileged" class="grey_button" ng-click="Setup()">Setup</button>
+                    <button class="blue_button" ng-disabled="inputDisabled" ng-click="CommitAddingTime()">Add Free</button>
+                    <button ng-disabled="inputDisabled" ng-show="user.login_privileged" ng-click="CommitAddingTime(true)">Add Meeting</button>
+                    <button class="red_button" ng-disabled="inputDisabled" ng-click="CommitRemovingFreeTime()">Remove</button>
+                    <button class="grey_button" ng-disabled="inputDisabled" ng-show="user.login_privileged" ng-click="GotoSetup()">Setup</button>
                 </div>
             </div>
         </div>
