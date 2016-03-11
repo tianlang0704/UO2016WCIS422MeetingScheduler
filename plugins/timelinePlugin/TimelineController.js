@@ -133,25 +133,7 @@ myApp.controller("TimelineController", function($scope, $state, $cookieStore, Ba
         for (var attrname in newOpt) { options[attrname] = newOpt[attrname]; }
         $scope.ui_o_chart.draw(dataTable, options);
         //hide short place holders
-        (function(){                                            //anonymous self calling function to prevent variable name conficts
-            var container = document.getElementById("timeline_chart_user");
-            var el=container.getElementsByTagName("rect");      //get all the descendant rect element inside the container
-            var width=3;                                //set a large initial value to width
-            var elToRem=[];                                     //element would be added to this array for removal
-            for(var i=0;i<el.length;i++)
-            {                           //looping over all the rect element of container
-                var cwidth=parseInt(el[i].getAttribute("width"));//getting the width of ith element
-                if(cwidth<width){                               //if current element width is less than previous width then this is min. width and ith element should be removed
-                    elToRem=[el[i]];
-                    width=cwidth;                               //setting the width with min width
-                }
-                else if(cwidth==width){                         //if current element width is equal to previous width then more that one element would be removed
-                    elToRem.push(el[i]);
-                }
-            }
-            for(var i=0;i<elToRem.length;i++) // now iterate JUST the elements to remove
-                elToRem[i].setAttribute("fill","none"); //make invisible all the rect element which has minimum width
-        })();
+        $("#timeline_chart_user > div > div:nth-child(1) > div > svg > g:nth-child(5) > rect:nth-child(1)").hide();
     };
 
     //Update timeline model with date bar input and use ShowTimeline to refresh it on the page.

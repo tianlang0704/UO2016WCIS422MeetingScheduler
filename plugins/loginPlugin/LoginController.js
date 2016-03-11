@@ -38,7 +38,7 @@ myApp.controller("LoginController", function($scope, $state, $cookieStore, Backe
             }
             if(data == -1)
             {
-                $scope.ShowMessage("Login failed", true);
+                $scope.ShowMessage("Incorrect username or password", true);
                 return false;
             }
 
