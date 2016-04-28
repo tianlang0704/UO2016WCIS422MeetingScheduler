@@ -6,6 +6,8 @@ Bugfix: Login page username format text
 Bugfix: Setup page clear selection after user deletion
 Bugfix: All input box clear slection after commit
 Bugfix: All pages show message and redirection on url input without login
+Bugfix: Timeline time box disappear when it gets too small
+Bugfix: Wrong password message made more clear
 
 
 2016-03-10

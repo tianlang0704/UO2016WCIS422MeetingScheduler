@@ -141,63 +141,30 @@ app.get('/getAllTimesBetweenDates/:start/:end/:user',function(req,res){
 });
 
 app.get('/createTimeForUser/:start/:end/:user/:type/:target',function(req,res){
-	connection.query("SELECT * FROM FreeTime WHERE free_start <= '" + req.params.start + "' AND free_end >= '" + req.params.end + "' AND login_id = '" + req.params.user + "';", function(err, rows){
-		if(rows.length == 1){
-			if(req.params.type == "Meeting" && rows[0].free_label == "Meeting"){
-				//error. Cant schedule meeting over meeting
-			}
-			if(req.params.type == "Free" && rows[0].free_label == "Free"){
-				//error, attempting to put free time inside free time
-			}
-			if(req.params.type == "Free" && rows[0].free_label == "Meeting"){
-				//error cant put free time into meeting slot
-			}
-			if(req.params.type == "Meeting" && rows[0].free_label == "Free"){
-				//success! Let's check the cases.
-				//need to add splitting
-				//case start times same
-				//case end times same
-				//case start and end same
-				//case start > existing free start and end < existing free end
-				if(req.params.start == rows[0].start && req.params.end == rows[0].end){
-					//same start, same end. delete and add new entry
-				}else if(req.params.start == rows[0].start && req.params.end < rows[0].end){
-					//split, make meeting at start of free time, add new free time from end of meeting to existing end
-				}else if(req.params.start > rows[0].start && req.params.end == rows[0].end){
-					//split, make free time start at existing free time, meeting to end at end time
-				}else if(req.params.start > rows[0].start && req.params.end < rows[0].end){
-					//make free time before and after meeting
-				}
-			}
-		}else{
-			//no existing time. Let's put it in.
-			if(req.params.type == "Meeting")
+	if(req.params.type == "Meeting")
+	{
+		connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`, `free_target_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "', '" + req.params.target + "');",function(err,rows){
+			if(err)
 			{
-				connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`, `free_target_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "', '" + req.params.target + "');",function(err,rows){
-					if(err)
-					{
-						console.log("Problem with MySQL"+err);
-					}
-					else
-					{
-						res.end(JSON.stringify(rows));
-					}
-				});
-			} else {
-				//check to see if there is an existing free time where end==new.start or start == new.end
-				connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "');",function(err,rows){
-					if(err)
-					{
-						console.log("Problem with MySQL"+err);
-					}
-					else
-					{
-						res.end(JSON.stringify(rows));
-					}
-				});
+				console.log("Problem with MySQL"+err);
 			}
-		}
-	});
+			else
+			{
+				res.end(JSON.stringify(rows));
+			}
+		});
+	} else {
+		connection.query("INSERT INTO `FreeTime` (`free_start`, `free_end`, `free_label`, `login_id`) VALUES ('" + req.params.start + "', '" + req.params.end + "', '" + req.params.type + "', '" + req.params.user + "');",function(err,rows){
+			if(err)
+			{
+				console.log("Problem with MySQL"+err);
+			}
+			else
+			{
+				res.end(JSON.stringify(rows));
+			}
+		});
+	}
 
 });
 
@@ -215,20 +182,16 @@ app.get('/usernameExist/:user',function(req,res){
 });
 
 app.get('/createUser/:user/:display/:pass/:role',function(req,res){
-	connection.query("SELECT * FROM Login WHERE login_username = '" + req.params.user + "';",function(err,rows) {
-		if(rows.length == 0) {
-			connection.query("INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`) VALUES ('" + req.params.user + "', '" + req.params.display + "', '" + req.params.role + "', '" + req.params.pass + "');", function (err, rows) {
-				if (err) {
-					console.log("Problem with MySQL" + err);
-				}
-				else {
-					res.end(JSON.stringify({success: true}));
-				}
-			});
-		}else{
-			res.end(JSON.stringify({success: false}));
-		}
-	});
+	connection.query("INSERT INTO `Login` (`login_username`, `login_displayname`, `login_role`, `login_password`) VALUES ('" + req.params.user + "', '" + req.params.display + "', '" + req.params.role + "', '" + req.params.pass + "');",function(err,rows){
+			if(err)
+			{
+				console.log("Problem with MySQL"+err);
+			}
+			else
+			{
+				res.end(JSON.stringify({success: true}));
+			}
+		});
 });
 app.get('/removeUser/:id',function(req,res){
 	connection.query("DELETE FROM Login WHERE login_id = '" + req.params.id + "';",function(err,rows){
